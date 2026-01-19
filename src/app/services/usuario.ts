@@ -22,8 +22,14 @@ export class UsuarioService {
         .set({
           email,
           rol: 'usuario',
-          fecha_registro: new Date(),
+          activo: true,
+          nombre: '',
+          apellido: '',
+          ci: '',
+          telefono: '',
+          fechaRegistro: new Date(),
         });
+
     });
   }
 
@@ -69,5 +75,14 @@ export class UsuarioService {
         .update({ activo }); //inge lo tiene en estado  
     });
   }
-
+  obtenerUsuarioPorCI(ci: string): Observable<UsuarioModelo | null> {
+    return runInInjectionContext(this.injector, () => {
+      return this.firestore
+        .collection<UsuarioModelo>('usuarios', ref => ref.where('ci', '==', ci))
+        .valueChanges({ idField: 'uid' })
+        .pipe(
+          map(users => users.length ? users[0] : null)
+        );
+    });
+  }
 }

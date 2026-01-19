@@ -9,6 +9,7 @@ import { DesactivarUsuario } from './modules/dashboard/bienvenida-admin/desactiv
 import { GestionarCategoria } from './modules/dashboard/gestionar-categoria/gestionar-categoria';
 import { AgregarProducto } from './modules/dashboard/agregar-producto/agregar-producto';
 import { GestionarProducto } from './modules/dashboard/gestionar-producto/gestionar-producto';
+import { Ingreso } from './modules/gym/ingreso/ingreso';
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'registrar', component: Registrar },
@@ -37,7 +38,9 @@ const routes: Routes = [
     ]
   },
 
-  { path: 'usuario', component: BienvenidaUsuario }
+  { path: 'usuario', component: BienvenidaUsuario },
+
+  { path: 'ingreso', component: Ingreso }  
 
 ];
 

@@ -10,6 +10,7 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AuthModule } from './modules/auth/auth-module';
 import { FormsModule } from '@angular/forms';
 import { DashboardModule } from './modules/dashboard/dashboard-module';
+import { GymModule } from './modules/gym/gym-module';
 
 
   
@@ -24,7 +25,8 @@ import { DashboardModule } from './modules/dashboard/dashboard-module';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
     AuthModule,
-    DashboardModule
+    DashboardModule,
+    GymModule
   ],
 
   providers: [

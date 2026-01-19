@@ -1,0 +1,21 @@
+<div class="ingreso-container">
+  <h2 class="title">Registro de Entrada al Gym</h2>
+  <p class="subtitle">Ingresa tu C.I. para validar tu suscripción y registrar asistencia</p>
+
+  <div class="form-group">
+    <label for="ci">C.I.</label>
+    <input type="text" id="ci" [(ngModel)]="ci" placeholder="Ej: 12345678" />
+  </div>
+
+  <button (click)="registrarIngreso()">Registrar Entrada</button>
+
+  <div class="mensaje" *ngIf="mensaje">
+    {{ mensaje }}
+  </div>
+
+  <div class="usuario-info" *ngIf="usuarioEncontrado">
+    <h3>{{ usuarioEncontrado.nombre }} {{ usuarioEncontrado.apellido }}</h3>
+    <p>Rol: {{ usuarioEncontrado.rol }}</p>
+    <p>Días restantes de suscripción: {{ diasRestantes }}</p>
+  </div>
+</div>
