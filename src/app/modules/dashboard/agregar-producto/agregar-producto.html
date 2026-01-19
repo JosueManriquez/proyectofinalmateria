@@ -1,0 +1,55 @@
+<div class="producto-container">
+  <h2>Agregar Producto</h2>
+
+  <!-- Nombre -->
+  <label class="label">Nombre del producto</label>
+  <input
+    placeholder="Escriba el nombre"
+    [(ngModel)]="producto.nombre"
+  />
+
+  <!-- Descripción -->
+  <label class="label">Descripción</label>
+  <input
+    placeholder="Descripción breve del producto"
+    [(ngModel)]="producto.descripcion"
+  />
+
+  <!-- Precio y Cantidad -->
+  <div class="fila">
+    <div class="campo">
+      <label class="label">Precio</label>
+      <input
+        type="number"
+        placeholder="0.00"
+        [(ngModel)]="producto.precio"
+      />
+    </div>
+
+    <div class="campo">
+      <label class="label">Cantidad</label>
+      <input
+        type="number"
+        placeholder="0"
+        [(ngModel)]="producto.cantidad"
+      />
+    </div>
+  </div>
+
+  <!-- Categoría -->
+  <label class="label">Categoría</label>
+  <select [(ngModel)]="producto.categoriaId">
+    <option value="" disabled selected>
+      Selecciona una categoría
+    </option>
+
+    <option *ngFor="let c of categorias" [value]="c.id">
+      {{ c.nombre }}
+    </option>
+  </select>
+
+  <!-- Botón -->
+  <button class="btn-guardar" (click)="guardarProducto()">
+    Guardar Producto
+  </button>
+</div>

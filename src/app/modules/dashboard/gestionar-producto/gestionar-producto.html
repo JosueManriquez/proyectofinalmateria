@@ -1,0 +1,33 @@
+<div class="producto-container">
+  <h2>Gestionar Productos</h2>
+
+  <div class="lista-productos">
+    <div class="producto-item" *ngFor="let p of productos">
+      <!-- VISTA NORMAL -->
+      <div *ngIf="productoEditando !== p.id" class="info">
+        <strong>{{ p.nombre }}</strong>
+        <small>{{ p.descripcion }}</small>
+        <small>Precio: Bs{{ p.precio }} | Cantidad: {{ p.cantidad }}</small>
+        <small>Categoría: {{ obtenerNombreCategoria(p.categoriaId) }}</small>
+      </div>
+
+      <!-- MODO EDICIÓN asdasdasd-->
+      <div *ngIf="productoEditando === p.id" class="edicion">   
+        <input [(ngModel)]="nombreEditado" placeholder="Nombre" />
+        <input [(ngModel)]="descripcionEditado" placeholder="Descripción" />
+        <input type="number" [(ngModel)]="precioEditado" placeholder="Precio" />
+        <input type="number" [(ngModel)]="cantidadEditado" placeholder="Cantidad" />
+        <select [(ngModel)]="categoriaIdEditado">
+          <option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="acciones">
+        <button *ngIf="productoEditando !== p.id" (click)="editarProducto(p)">Editar</button>
+        <button *ngIf="productoEditando === p.id" (click)="guardarEdicion(p)">Guardar</button>
+        <button *ngIf="productoEditando === p.id" (click)="cancelarEdicion()">Cancelar</button>
+        <button (click)="eliminarProducto(p.id!)" class="eliminar">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

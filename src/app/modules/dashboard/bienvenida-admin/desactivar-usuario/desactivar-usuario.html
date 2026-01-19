@@ -1,0 +1,54 @@
+<div class="card">
+
+  <h2 class="title">Gestión de Usuarios</h2>
+  <p class="subtitle">Activar o desactivar acceso al sistema</p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.email }}</td>
+
+        <td>
+          <span class="rol">
+            {{ usuario.rol | titlecase }}
+          </span>
+        </td>
+
+        <td>
+          <span
+            class="estado"
+            [class.activo]="usuario.activo"
+            [class.inactivo]="!usuario.activo">
+            {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+
+        <td>
+          <button
+            class="btn"
+            [class.btn-danger]="usuario.activo"
+            [class.btn-success]="!usuario.activo"
+            (click)="cambiarEstado(usuario)">
+            {{ usuario.activo ? 'Desactivar' : 'Activar' }}
+          </button>
+        </td>
+      </tr>
+
+      <tr *ngIf="usuarios.length === 0">
+        <td colspan="4" class="empty">
+          No hay usuarios registrados
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

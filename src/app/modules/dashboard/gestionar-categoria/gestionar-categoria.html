@@ -1,0 +1,58 @@
+<div class="categoria-container">
+    <h2>Gestión de Categorías</h2>
+
+    <!-- FORMULARIO NUEVA CATEGORÍA -->
+    <div class="form">
+        <input placeholder="Nombre" [(ngModel)]="nuevaCategoria.nombre" />
+        <input placeholder="Descripción" [(ngModel)]="nuevaCategoria.descripcion" />
+        <button (click)="guardarCategoria()">Agregar</button>
+    </div>
+
+    <!-- LISTA DE CATEGORÍAS -->
+    <div class="lista">
+        <div class="item" *ngFor="let c of categorias">
+            <!-- VISTA NORMAL -->
+            <div *ngIf="categoriaEditando !== c.id" class="info">
+                <strong>{{ c.nombre }}</strong>
+                <small>{{ c.descripcion }}</small>
+
+                <!-- ESTADO -->
+                <span
+                    class="estado"
+                    [class.activo]="c.activo"
+                    [class.inactivo]="!c.activo"
+                >
+                    {{ c.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+            </div>
+
+            <!-- MODO EDICIÓN -->
+            <div *ngIf="categoriaEditando === c.id" class="edicion">
+                <input [(ngModel)]="nombreEditado" />
+                <input [(ngModel)]="descripcionEditada" />
+            </div>
+
+            <div class="acciones">
+                <button *ngIf="categoriaEditando !== c.id" (click)="editarCategoria(c)">
+                    Editar
+                </button>
+
+                <button *ngIf="categoriaEditando === c.id" (click)="guardarEdicion(c)">
+                    Guardar
+                </button>
+
+                <button *ngIf="categoriaEditando === c.id" (click)="cancelarEdicion()">
+                    Cancelar
+                </button>
+
+                <button (click)="alterarCategoria(c)">
+                    {{ c.activo ? "Desactivar" : "Activar" }}
+                </button>
+
+                <button class="eliminar" (click)="eliminarCategoria(c.id!)">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

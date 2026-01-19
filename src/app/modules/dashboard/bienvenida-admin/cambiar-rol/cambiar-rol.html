@@ -1,0 +1,34 @@
+<div class="card">
+  <h2>Editar Usuarios</h2>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.email }}</td>
+        <td>
+          <select [(ngModel)]="rolSeleccionado[usuario.uid]">
+            <option value="admin">Admin</option>
+            <option value="usuario">Usuario</option>
+            <option value="cliente">Cliente</option>
+          </select>
+        </td>
+        <td>
+          <button (click)="cambiarRol(usuario.uid)">Actualizar Rol</button>
+        </td>
+      </tr>
+
+      <tr *ngIf="usuarios.length === 0">
+        <td colspan="3" class="empty">
+          No hay usuarios registrados
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

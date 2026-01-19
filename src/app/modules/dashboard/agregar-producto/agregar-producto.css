@@ -1,0 +1,86 @@
+        /* Contenedor principal */
+        .producto-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Título */
+        .producto-container h2 {
+        font-size: 26px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 20px;
+        }
+
+        /* Inputs y select */
+        .producto-container input,
+        .producto-container select {
+        width: 100%;
+        padding: 12px 14px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        font-size: 14px;
+        color: #374151;
+        outline: none;
+        transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .producto-container input:focus,
+        .producto-container select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Placeholder */
+        .producto-container input::placeholder {
+        color: #9ca3af;
+        }
+
+        /* Select */
+        .producto-container select {
+        background-color: #ffffff;
+        cursor: pointer;
+        }
+
+        /* Botón guardar */
+        .producto-container button {
+        width: 100%;
+        padding: 12px;
+        background-color: #10b981;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+        }
+
+        .producto-container button:hover {
+        background-color: #059669;
+        }
+
+        .producto-container button:active {
+        transform: scale(0.98);
+        }
+
+        /* Mensaje de ayuda / error (si luego lo usas) */
+        .mensaje {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+        .producto-container {
+            margin: 20px;
+            padding: 20px;
+        }
+        }

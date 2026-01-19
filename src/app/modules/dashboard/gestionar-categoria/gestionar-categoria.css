@@ -1,0 +1,131 @@
+.categoria-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 25px 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+.categoria-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Formulario */
+.form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.form input:focus {
+  border-color: #007bff;
+}
+
+.form button {
+  padding: 10px 16px;
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form button:hover {
+  background: #0056b3;
+}
+
+/* Lista */
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.info small {
+  color: #777;
+}
+
+/* ESTADO */
+.estado {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.estado.activo {
+  color: #28a745; /* verde */
+}
+
+.estado.inactivo {
+  color: #dc3545; /* rojo */
+}
+
+/* Edición */
+.edicion input {
+  padding: 6px 8px;
+  margin-right: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Acciones */
+.acciones button {
+  margin-left: 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.acciones button:first-child {
+  background: #ffc107;
+}
+
+.acciones button:nth-child(2) {
+  background: #28a745;
+  color: white;
+}
+
+.acciones button:nth-child(3) {
+  background: #6c757d;
+  color: white;
+}
+
+.acciones button:nth-child(4) {
+  background: #17a2b8;
+  color: white;
+}
+
+.eliminar {
+  background: #dc3545 !important;
+  color: white;
+}

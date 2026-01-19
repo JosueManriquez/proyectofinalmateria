@@ -1,0 +1,40 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h4 class="brand">Administrador</h4>
+
+    <nav>
+      <a routerLink="/admin/cambiar-rol" routerLinkActive="active">
+        <i class="bi bi-people"></i> Editar Roles de Usuarios
+      </a>
+
+      <a routerLink="/admin/desactivar-usuario" routerLinkActive="active">
+        <i class="bi bi-person-check"></i> Desactivar Usuarios
+      </a>
+
+      <a routerLink="/admin/gestionar-categoria" routerLinkActive="active">
+        <i class="bi bi-gear"></i> Gestionar Categoria
+      </a>
+      <a routerLink="/admin/agregar-producto" routerLinkActive="active">
+        <i class="bi bi-gear"></i> Agregar producto
+      </a>
+      <a routerLink="/admin/gestionar-producto" routerLinkActive="active">
+        <i class="bi bi-gear"></i> Gestionar Productos
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+    <header class="topbar">
+      <h3>Panel de Administración</h3>
+      <button class="btn btn-outline-danger btn-sm" (click)="cerrarSesion()">
+        Cerrar sesión
+      </button>
+    </header>
+
+    <section class="content">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>

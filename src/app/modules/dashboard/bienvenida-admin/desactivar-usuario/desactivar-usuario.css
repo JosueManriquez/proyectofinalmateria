@@ -1,0 +1,114 @@
+/* Contenedor principal */
+.card {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Título y subtítulo */
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+/* Tabla */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background-color: #f3f4f6;
+}
+
+.table th, .table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table th {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Filas */
+.table tbody tr:hover {
+  background-color: #f9fafb;
+  transition: background 0.3s;
+}
+
+/* Estado del usuario */
+.estado {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  display: inline-block;
+  text-align: center;
+}
+
+.estado.activo {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.estado.inactivo {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Rol */
+.rol {
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Botones */
+.btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-success {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+/* Mensaje de tabla vacía */
+.empty {
+  text-align: center;
+  padding: 20px;
+  color: #9ca3af;
+  font-style: italic;
+}
