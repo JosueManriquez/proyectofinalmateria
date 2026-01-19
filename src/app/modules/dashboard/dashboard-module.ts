@@ -9,6 +9,9 @@ import { FormsModule } from '@angular/forms';
 import { GestionarCategoria } from './gestionar-categoria/gestionar-categoria';
 import { AgregarProducto } from './agregar-producto/agregar-producto';
 import { GestionarProducto } from './gestionar-producto/gestionar-producto';
+import { ListarUsuarios } from './bienvenida-admin/usuarios/listar-usuarios/listar-usuarios';
+import { CrearUsuario } from './bienvenida-admin/usuarios/crear-usuario/crear-usuario';
+import { EditarUsuario } from './bienvenida-admin/usuarios/editar-usuario/editar-usuario';
 
 
 @NgModule({
@@ -20,6 +23,9 @@ import { GestionarProducto } from './gestionar-producto/gestionar-producto';
     GestionarCategoria,
     AgregarProducto,
     GestionarProducto,
+    ListarUsuarios,
+    CrearUsuario,
+    EditarUsuario,
 
   ],
   imports: [

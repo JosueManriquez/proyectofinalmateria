@@ -1,0 +1,11 @@
+<h2>Editar Usuario</h2>
+<form (ngSubmit)="guardar()">
+  <label>Rol</label>
+  <select [(ngModel)]="usuario.rol" name="rol">
+    <option value="admin">Admin</option>
+    <option value="usuario">Usuario</option>
+    <option value="cliente">Cliente</option>
+  </select>
+  <button type="submit">Guardar</button>
+</form>
+<a routerLink="/admin/usuarios">Volver</a>

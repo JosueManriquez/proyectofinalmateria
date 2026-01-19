@@ -3,7 +3,15 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UsuarioModelo } from '../models/usuario.model';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
+
+export interface UsuarioCrear {
+  nombre: string;
+  apellido: string;
+  ci: string;
+  rol: 'admin' | 'usuario' | 'cliente';
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -11,7 +19,8 @@ export class UsuarioService {
 
   constructor(
     private firestore: AngularFirestore,
-    private injector: Injector
+    private injector: Injector,
+    private afAuth: AngularFireAuth
   ) { }
 
   crearUsuario(uid: string, email: string) {
@@ -85,4 +94,10 @@ export class UsuarioService {
         );
     });
   }
+  async registrarUsuario(email: string, password: string, datos: UsuarioCrear) {
+    // 1️⃣ Crear usuario en Firebase Auth
+    const cred = await this.afAuth.createUserWithEmailAndPassword(email, password);
+    const uid = cred.user?.uid || '';
+  }
 }
+

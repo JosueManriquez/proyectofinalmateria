@@ -1,0 +1,25 @@
+<form (ngSubmit)="crear()">
+  <div>
+    <input type="text" placeholder="Nombre" [(ngModel)]="nombre" name="nombre" required>
+  </div>
+  <div>
+    <input type="text" placeholder="Apellido" [(ngModel)]="apellido" name="apellido" required>
+  </div>
+  <div>
+    <input type="text" placeholder="CI" [(ngModel)]="ci" name="ci" required>
+  </div>
+  <div>
+    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required>
+  </div>
+  <div>
+    <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password" required>
+  </div>
+  <div>
+    <select [(ngModel)]="rol" name="rol">
+      <option value="admin">Admin</option>
+      <option value="usuario">Usuario</option>
+      <option value="cliente">Cliente</option>
+    </select>
+  </div>
+  <button type="submit">Crear Usuario</button>
+</form>

@@ -1,24 +1,33 @@
 <div class="admin-layout">
-  <!-- Sidebarasdsad -->
+  <!-- Sidebar -->
   <aside class="sidebar">
     <h4 class="brand">Administrador</h4>
 
     <nav>
-      <a routerLink="/admin/cambiar-rol" routerLinkActive="active">
-        <i class="bi bi-people"></i> Editar Roles de Usuarios
+      <!-- Usuarios -->
+      <a routerLink="usuarios" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-people"></i> Listar Usuarios
+      </a>
+      <a routerLink="usuarios/crear" routerLinkActive="active">
+        <i class="bi bi-person-plus"></i> Crear Usuario
       </a>
 
-      <a routerLink="/admin/desactivar-usuario" routerLinkActive="active">
+      <!-- Roles y desactivación -->
+      <a routerLink="cambiar-rol" routerLinkActive="active">
+        <i class="bi bi-people"></i> Editar Roles de Usuarios
+      </a>
+      <a routerLink="desactivar-usuario" routerLinkActive="active">
         <i class="bi bi-person-check"></i> Desactivar Usuarios
       </a>
 
-      <a routerLink="/admin/gestionar-categoria" routerLinkActive="active">
+      <!-- Productos / Categorías -->
+      <a routerLink="gestionar-categoria" routerLinkActive="active">
         <i class="bi bi-gear"></i> Gestionar Categoria
       </a>
-      <a routerLink="/admin/agregar-producto" routerLinkActive="active">
+      <a routerLink="agregar-producto" routerLinkActive="active">
         <i class="bi bi-gear"></i> Agregar producto
       </a>
-      <a routerLink="/admin/gestionar-producto" routerLinkActive="active">
+      <a routerLink="gestionar-producto" routerLinkActive="active">
         <i class="bi bi-gear"></i> Gestionar Productos
       </a>
     </nav>
@@ -34,6 +43,7 @@
     </header>
 
     <section class="content">
+      <!-- Aquí cargan todos los hijos del admin -->
       <router-outlet></router-outlet>
     </section>
   </main>

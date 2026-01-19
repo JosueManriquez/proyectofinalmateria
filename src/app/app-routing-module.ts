@@ -10,6 +10,9 @@ import { GestionarCategoria } from './modules/dashboard/gestionar-categoria/gest
 import { AgregarProducto } from './modules/dashboard/agregar-producto/agregar-producto';
 import { GestionarProducto } from './modules/dashboard/gestionar-producto/gestionar-producto';
 import { Ingreso } from './modules/gym/ingreso/ingreso';
+import { CrearUsuario } from './modules/dashboard/bienvenida-admin/usuarios/crear-usuario/crear-usuario';
+import { ListarUsuarios } from './modules/dashboard/bienvenida-admin/usuarios/listar-usuarios/listar-usuarios';
+import { EditarUsuario } from './modules/dashboard/bienvenida-admin/usuarios/editar-usuario/editar-usuario';
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'registrar', component: Registrar },
@@ -33,14 +36,17 @@ const routes: Routes = [
     {
       path: 'gestionar-producto',
       component: GestionarProducto
-    }
+    },
+    { path: 'usuarios', component: ListarUsuarios },
+    { path: 'usuarios/crear', component: CrearUsuario },
+    { path: 'usuarios/editar/:uid', component: EditarUsuario }
 
     ]
   },
 
   { path: 'usuario', component: BienvenidaUsuario },
 
-  { path: 'ingreso', component: Ingreso }  
+  { path: 'ingreso', component: Ingreso }
 
 ];
 
