@@ -23,19 +23,25 @@ export class ListarUsuarios implements OnInit {
   ngOnInit(): void {
     this.usuarioService.obtenerUsuarios().subscribe(usuarios => {
       this.usuarios = usuarios;
-      this.cdr.detectChanges();
 
       usuarios.forEach(u => {
-        this.rolSeleccionado[u.uid] = u.rol;
+        if (u.uid) {
+          this.rolSeleccionado[u.uid] = u.rol;
+        }
       });
+
+      this.cdr.detectChanges();
     });
   }
 
-  cambiarRol(uid: string) {
-    this.usuarioService.cambiarRol(uid, this.rolSeleccionado[uid]);
+  cambiarRol(uid: string): void {
+    const nuevoRol = this.rolSeleccionado[uid];
+    if (!nuevoRol) return;
+
+    this.usuarioService.cambiarRol(uid, nuevoRol);
   }
 
-  editarUsuario(uid: string) {
+  editarUsuario(uid: string): void {
     this.router.navigate(['/admin/usuarios/editar', uid]);
   }
 

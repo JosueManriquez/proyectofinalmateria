@@ -94,10 +94,38 @@ export class UsuarioService {
         );
     });
   }
-  async registrarUsuario(email: string, password: string, datos: UsuarioCrear) {
+  async registrarUsuario(
+    email: string,
+    password: string,
+    datos: UsuarioCrear
+  ): Promise<void> {
+
     // 1️⃣ Crear usuario en Firebase Auth
     const cred = await this.afAuth.createUserWithEmailAndPassword(email, password);
-    const uid = cred.user?.uid || '';
+
+    if (!cred.user) {
+      throw new Error('No se pudo crear el usuario');
+    }
+
+    const uid = cred.user.uid;
+
+    // 2️⃣ Guardar usuario en Firestore
+    await runInInjectionContext(this.injector, async () => {
+      await this.firestore
+        .collection('usuarios')
+        .doc(uid)
+        .set({
+          nombre: datos.nombre,
+          apellido: datos.apellido,
+          ci: datos.ci,
+          rol: datos.rol,
+          email: email,
+          activo: true,
+          telefono: '',
+          fechaRegistro: new Date()
+        });
+    });
   }
+
 }
 

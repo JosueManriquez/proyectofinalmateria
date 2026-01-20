@@ -22,19 +22,21 @@ export class Ingreso {
     private suscripcionService: SuscripcionService,
     private asistenciaService: AsistenciaService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {}
 
   async registrarIngreso() {
     this.mensaje = '';
     this.usuarioEncontrado = null;
-    debugger
+
     if (!this.ci) {
       this.mensaje = 'Ingresa tu C.I.';
       return;
     }
 
     try {
-      const usuario = await this.usuarioService.obtenerUsuarioPorCI(this.ci).toPromise();
+      const usuario = await this.usuarioService
+        .obtenerUsuarioPorCI(this.ci)
+        .toPromise();
 
       if (!usuario) {
         this.mensaje = 'Usuario no registrado';
@@ -42,9 +44,19 @@ export class Ingreso {
         return;
       }
 
+      // ✅ VALIDACIÓN CLAVE
+      if (!usuario.uid) {
+        this.mensaje = 'Usuario inválido (sin UID)';
+        this.cdr.detectChanges();
+        return;
+      }
+
       this.usuarioEncontrado = usuario;
 
-      const suscripcion = await this.suscripcionService.obtenerSuscripcionActiva(usuario.uid).toPromise();
+      const suscripcion = await this.suscripcionService
+        .obtenerSuscripcionActiva(usuario.uid)
+        .toPromise();
+
       if (!suscripcion) {
         this.mensaje = 'No tiene suscripción activa';
         this.cdr.detectChanges();
@@ -52,8 +64,11 @@ export class Ingreso {
       }
 
       const hoy = new Date();
-      const fechaFin = suscripcion.fechaFin; // ⚠ ya es Date
-      this.diasRestantes = Math.ceil((fechaFin.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
+      const fechaFin = suscripcion.fechaFin; // ya es Date
+
+      this.diasRestantes = Math.ceil(
+        (fechaFin.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       await this.asistenciaService.registrarEntrada(usuario.uid);
 

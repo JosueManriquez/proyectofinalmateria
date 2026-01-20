@@ -23,6 +23,7 @@ export class CrearUsuario {
   ) {}
 
   async crear() {
+    debugger
     if (!this.nombre || !this.apellido || !this.ci || !this.email || !this.password) {
       alert('Todos los campos son obligatorios');
       return;

@@ -17,15 +17,17 @@
       <td>{{ u.ci }}</td>
       <td>{{ u.email }}</td>
       <td>
-        <select [(ngModel)]="rolSeleccionado[u.uid]">
+        <select *ngIf="u.uid" [(ngModel)]="rolSeleccionado[u.uid]">
+
           <option value="admin">Admin</option>
           <option value="usuario">Usuario</option>
           <option value="cliente">Cliente</option>
         </select>
       </td>
       <td>
-        <button (click)="cambiarRol(u.uid)">Guardar</button>
-        <button (click)="editarUsuario(u.uid)">Editar</button>
+        <button *ngIf="u.uid" (click)="cambiarRol(u.uid)">Guardar</button>
+        <button *ngIf="u.uid" (click)="editarUsuario(u.uid)">Editar</button>
+
       </td>
     </tr>
   </tbody>

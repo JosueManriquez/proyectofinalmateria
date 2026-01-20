@@ -13,14 +13,18 @@
       <tr *ngFor="let usuario of usuarios">
         <td>{{ usuario.email }}</td>
         <td>
-          <select [(ngModel)]="rolSeleccionado[usuario.uid]">
+          <select *ngIf="usuario.uid" [(ngModel)]="rolSeleccionado[usuario.uid]">
+
             <option value="admin">Admin</option>
             <option value="usuario">Usuario</option>
             <option value="cliente">Cliente</option>
           </select>
         </td>
         <td>
-          <button (click)="cambiarRol(usuario.uid)">Actualizar Rol</button>
+          <button *ngIf="usuario.uid" (click)="cambiarRol(usuario.uid)">
+            Actualizar Rol
+          </button>
+
         </td>
       </tr>
 

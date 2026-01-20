@@ -1,9 +1,11 @@
 export interface UsuarioModelo {
-  uid: string;
-  nombre: string;    // agregado
-  apellido: string;  // agregado
-  ci: string;        // agregado
+  uid?: string; // opcional
+  nombre: string;
+  apellido: string;
+  ci: string;
   email: string;
+  telefono: string;
   rol: 'admin' | 'usuario' | 'cliente';
   activo: boolean;
+  fechaRegistro: any; // Firestore Timestamp o Date
 }
