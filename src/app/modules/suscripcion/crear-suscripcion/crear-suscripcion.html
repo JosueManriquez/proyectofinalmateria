@@ -1,0 +1,98 @@
+<div class="suscripcion-container">
+  <h2>{{ editarId ? 'Editar Suscripción' : 'Crear Suscripción' }}</h2>
+
+  <!-- FORMULARIO -->
+  <form (ngSubmit)="guardarSuscripcion()" class="form-suscripcion">
+    <div class="form-group">
+      <label for="uidUsuario">CI Usuario</label>
+      <input
+        id="uidUsuario"
+        type="text"
+        [(ngModel)]="suscripcion.uidUsuario"
+        name="uidUsuario"
+        placeholder="Ingrese CI del usuario"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="tipo">Tipo de Plan</label>
+      <select id="tipo" [(ngModel)]="suscripcion.tipo" name="tipo" required>
+        <option value="MENSUAL">Mensual</option>
+        <option value="TRIMESTRAL">Trimestral</option>
+        <option value="ANUAL">Anual</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="fechaInicio">Fecha Inicio</label>
+      <input
+        id="fechaInicio"
+        type="date"
+        [(ngModel)]="suscripcion.fechaInicio"
+        name="fechaInicio"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="fechaFin">Fecha Fin</label>
+      <input
+        id="fechaFin"
+        type="date"
+        [(ngModel)]="suscripcion.fechaFin"
+        name="fechaFin"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" [(ngModel)]="suscripcion.activa" name="activa" />
+        Activa
+      </label>
+    </div>
+
+    <div class="form-buttons">
+      <button type="submit" class="btn-submit">{{ editarId ? 'Actualizar' : 'Crear' }}</button>
+      <button type="button" class="btn-cancel" (click)="limpiarForm()">Limpiar</button>
+    </div>
+  </form>
+
+  <!-- TABLA DE SUSCRIPCIONES -->
+  <h3>Suscripciones Registradas</h3>
+  <table class="tabla-suscripciones">
+    <thead>
+      <tr>
+        <th>Apellido</th>
+        <th>CI</th>
+        <th>Tipo</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Activa</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of suscripciones$ | async">
+        <td>{{ s.usuario?.apellido || 'Sin usuario' }}</td>
+        <td>{{ s.uidUsuario }}</td>
+        <td>{{ s.tipo }}</td>
+        <td>{{ s.fechaInicio | date:'yyyy-MM-dd' }}</td>
+        <td>{{ s.fechaFin | date:'yyyy-MM-dd' }}</td>
+        <td>
+          <span [class.activo]="s.activa" [class.inactivo]="!s.activa">
+            {{ s.activa ? 'Sí' : 'No' }}
+          </span>
+        </td>
+        <td class="acciones">
+          <button class="btn-editar" (click)="editar(s)">Editar</button>
+          <button class="btn-toggle" (click)="toggleEstado(s)">
+            {{ s.activa ? 'Desactivar' : 'Activar' }}
+          </button>
+          <button class="btn-eliminar" (click)="eliminar(s)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

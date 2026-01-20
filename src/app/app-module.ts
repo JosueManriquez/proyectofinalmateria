@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth-module';
 import { FormsModule } from '@angular/forms';
 import { DashboardModule } from './modules/dashboard/dashboard-module';
 import { GymModule } from './modules/gym/gym-module';
+import { SuscripcionModule } from './modules/suscripcion/suscripcion-module';
 
 
   
@@ -26,7 +27,8 @@ import { GymModule } from './modules/gym/gym-module';
     AngularFireAuthModule,
     AuthModule,
     DashboardModule,
-    GymModule
+    GymModule,
+    SuscripcionModule
   ],
 
   providers: [

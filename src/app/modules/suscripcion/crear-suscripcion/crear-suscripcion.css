@@ -1,0 +1,141 @@
+.suscripcion-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 25px 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+.suscripcion-container h2,
+.suscripcion-container h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* FORMULARIO */
+.form-suscripcion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #007bff;
+}
+
+.form-buttons {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-submit {
+  padding: 8px 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background: #0056b3;
+}
+
+.btn-cancel {
+  padding: 8px 15px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: #5a6268;
+}
+
+/* TABLA */
+.tabla-suscripciones {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabla-suscripciones th,
+.tabla-suscripciones td {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.tabla-suscripciones th {
+  background: #f1f1f1;
+}
+
+.activo {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.inactivo {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* ACCIONES */
+.acciones button {
+  margin: 2px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-editar {
+  background: #ffc107;
+  color: #333;
+}
+
+.btn-editar:hover {
+  background: #e0a800;
+}
+
+.btn-toggle {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-toggle:hover {
+  background: #138496;
+}
+
+.btn-eliminar {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background: #c82333;
+}

@@ -1,0 +1,92 @@
+.renovar-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.renovar-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #0d6efd;
+}
+
+.buscar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.buscar input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.buscar button {
+  padding: 8px 15px;
+  background-color: #0d6efd;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.buscar button:hover {
+  background-color: #0b5ed7;
+}
+
+.mensaje {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #ffeeba;
+  color: #856404;
+}
+
+.usuario-info {
+  margin-top: 20px;
+}
+
+.ultima-suscripcion {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #e9ecef;
+  border-radius: 5px;
+}
+
+.form-renovar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.form-renovar label {
+  font-weight: bold;
+}
+
+.form-renovar input,
+.form-renovar select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.btn-renovar {
+  width: 100%;
+  padding: 10px;
+  background-color: #198754;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-renovar:hover {
+  background-color: #157347;
+}

@@ -13,6 +13,10 @@ import { Ingreso } from './modules/gym/ingreso/ingreso';
 import { CrearUsuario } from './modules/dashboard/bienvenida-admin/usuarios/crear-usuario/crear-usuario';
 import { ListarUsuarios } from './modules/dashboard/bienvenida-admin/usuarios/listar-usuarios/listar-usuarios';
 import { EditarUsuario } from './modules/dashboard/bienvenida-admin/usuarios/editar-usuario/editar-usuario';
+import { CrearSuscripcion } from './modules/suscripcion/crear-suscripcion/crear-suscripcion';
+import { RenovarSuscripcion } from './modules/suscripcion/renovar-suscripcion/renovar-suscripcion';
+import { Historial } from './modules/suscripcion/historial/historial';
+
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'registrar', component: Registrar },
@@ -39,8 +43,12 @@ const routes: Routes = [
     },
     { path: 'usuarios', component: ListarUsuarios },
     { path: 'usuarios/crear', component: CrearUsuario },
-    { path: 'usuarios/editar/:uid', component: EditarUsuario }
+    { path: 'usuarios/editar/:uid', component: EditarUsuario },
 
+      // suscricion
+    { path: 'suscripcion/crear-suscripcion', component: CrearSuscripcion },
+    { path: 'suscripcion/renovar-suscripcion', component: RenovarSuscripcion },
+    { path: 'suscripcion/historial', component: Historial }
     ]
   },
 
