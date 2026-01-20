@@ -27,7 +27,7 @@ export class Ingreso {
   async registrarIngreso() {
     this.mensaje = '';
     this.usuarioEncontrado = null;
-
+    debugger
     if (!this.ci) {
       this.mensaje = 'Ingresa tu C.I.';
       return;
@@ -44,7 +44,7 @@ export class Ingreso {
         return;
       }
 
-      // ✅ VALIDACIÓN CLAVE
+      
       if (!usuario.uid) {
         this.mensaje = 'Usuario inválido (sin UID)';
         this.cdr.detectChanges();
