@@ -13,9 +13,9 @@ import { Ingreso } from './modules/gym/ingreso/ingreso';
 import { CrearUsuario } from './modules/dashboard/bienvenida-admin/usuarios/crear-usuario/crear-usuario';
 import { ListarUsuarios } from './modules/dashboard/bienvenida-admin/usuarios/listar-usuarios/listar-usuarios';
 import { EditarUsuario } from './modules/dashboard/bienvenida-admin/usuarios/editar-usuario/editar-usuario';
-import { CrearSuscripcion } from './modules/suscripcion/crear-suscripcion/crear-suscripcion';
 import { RenovarSuscripcion } from './modules/suscripcion/renovar-suscripcion/renovar-suscripcion';
 import { Historial } from './modules/suscripcion/historial/historial';
+import { CrearSuscripcion } from './modules/suscripcion/crear-suscripcion/crear-suscripcion';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },

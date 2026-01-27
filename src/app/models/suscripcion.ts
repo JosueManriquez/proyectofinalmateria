@@ -1,6 +1,8 @@
 export interface SuscripcionModelo {
+  UsuarioModeloCi: string;
+  UsuarioModeloApellido: string;
+
   id?: string;
-  uidUsuario: string;
   tipo: 'MENSUAL' | 'TRIMESTRAL' | 'ANUAL';
   fechaInicio: Date;
   fechaFin: Date;

@@ -1,141 +1,94 @@
-.suscripcion-container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 25px 30px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+/* Contenedor del formulario */
+.form-container {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.suscripcion-container h2,
-.suscripcion-container h3 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 20px;
+/* Estilo de los campos del formulario */
+.form-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
 }
 
-/* FORMULARIO */
-.form-suscripcion {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 30px;
-}
-
-.form-group {
-  flex: 1 1 200px;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group input,
-.form-group select {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  outline: none;
-  transition: 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #007bff;
-}
-
-.form-buttons {
+.form-container input,
+.form-container select {
   width: 100%;
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
+  padding: 8px 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
-.btn-submit {
-  padding: 8px 15px;
-  background: #007bff;
+.form-container input:focus,
+.form-container select:focus {
+  border-color: #3f51b5;
+  outline: none;
+}
+
+/* Botón de guardar */
+.form-container button {
+  padding: 10px 20px;
+  background-color: #3f51b5;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.btn-submit:hover {
-  background: #0056b3;
+.form-container button:hover {
+  background-color: #303f9f;
 }
 
-.btn-cancel {
-  padding: 8px 15px;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+/* Tabla de suscripciones */
+.table-container {
+  max-width: 800px;
+  margin: 20px auto;
+  overflow-x: auto;
 }
 
-.btn-cancel:hover {
-  background: #5a6268;
-}
-
-/* TABLA */
-.tabla-suscripciones {
+table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  background-color: white;
 }
 
-.tabla-suscripciones th,
-.tabla-suscripciones td {
+th, td {
   padding: 10px 12px;
-  border: 1px solid #ddd;
-  text-align: center;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
-.tabla-suscripciones th {
-  background: #f1f1f1;
+th {
+  background-color: #3f51b5;
+  color: white;
+  font-weight: 600;
 }
 
-.activo {
-  color: #28a745;
-  font-weight: bold;
+tr:hover {
+  background-color: #f1f1f1;
 }
 
-.inactivo {
-  color: #dc3545;
-  font-weight: bold;
-}
-
-/* ACCIONES */
-.acciones button {
-  margin: 2px;
+/* Botón de eliminar en la tabla */
+.table-container button {
   padding: 5px 10px;
+  background-color: #e53935;
+  color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.9em;
 }
 
-.btn-editar {
-  background: #ffc107;
-  color: #333;
-}
-
-.btn-editar:hover {
-  background: #e0a800;
-}
-
-.btn-toggle {
-  background: #17a2b8;
-  color: white;
-}
-
-.btn-toggle:hover {
-  background: #138496;
-}
-
-.btn-eliminar {
-  background: #dc3545;
-  color: white;
-}
-
-.btn-eliminar:hover {
-  background: #c82333;
+.table-container button:hover {
+  background-color: #c62828;
 }

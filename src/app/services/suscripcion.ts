@@ -1,107 +1,118 @@
-import { Injectable, Injector, runInInjectionContext } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { map, firstValueFrom } from 'rxjs';
-import { Observable } from 'rxjs';
-
-import { UsuarioService, UsuarioCrear } from './usuario';
-
-export interface SuscripcionModelo {
-  id?: string;
-  uidUsuario: string; // CI del usuario
-  tipo: 'MENSUAL' | 'TRIMESTRAL' | 'ANUAL';
-  fechaInicio: Date;
-  fechaFin: Date;
-  activa: boolean;
-  usuario?: UsuarioCrear; // opcional: datos completos del usuario
-}
+import { SuscripcionModelo } from '../models/suscripcion';
+import { UsuarioModelo } from '../models/usuario.model';
+import { Observable, firstValueFrom } from 'rxjs';
+import { map, first } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SuscripcionService {
-  constructor(
-    private firestore: AngularFirestore,
-    private injector: Injector,
-    private usuarioService: UsuarioService
-  ) {}
+
+  constructor(private afs: AngularFirestore) {}
+
+  // Crear suscripción
+  crearSuscripcion(suscripcion: SuscripcionModelo): Promise<void> {
+    const id = this.afs.createId();
+    return this.afs.collection('suscripciones').doc(id).set({ ...suscripcion });
+  }
 
   // Listar todas las suscripciones
   listarSuscripciones(): Observable<SuscripcionModelo[]> {
-    return runInInjectionContext(this.injector, () => {
-      return this.firestore
-        .collection<SuscripcionModelo>('suscripciones', ref => ref.orderBy('fechaInicio', 'desc'))
-        .valueChanges({ idField: 'id' });
-    });
+    return this.afs.collection<SuscripcionModelo>('suscripciones')
+      .valueChanges({ idField: 'id' }); // agrega el id automáticamente
   }
 
-async crearSuscripcion(sus: SuscripcionModelo): Promise<void> {
-  // Primero, obtener el usuario por CI usando UsuarioService
-  const usuario = await firstValueFrom(this.usuarioService.obtenerUsuarioPorCI(sus.uidUsuario));
-
-  if (!usuario) {
-    throw new Error('El CI ingresado no existe en la colección de usuarios');
+  // Actualizar suscripción
+  actualizarSuscripcion(id: string, suscripcion: SuscripcionModelo): Promise<void> {
+    return this.afs.collection('suscripciones').doc(id).update(suscripcion);
   }
 
-  // Crear ID de la suscripción
-  const id = this.firestore.createId();
-
-  // Guardar la suscripción en Firestore
-  return runInInjectionContext(this.injector, () => {
-    return this.firestore.collection('suscripciones').doc(id).set({
-      ...sus,
-      activa: true,
-      usuario
-    });
-  });
-}
-
-
-  // Actualizar suscripción existente
-  actualizarSuscripcion(id: string, datos: Partial<SuscripcionModelo>) {
-    return runInInjectionContext(this.injector, () => {
-      return this.firestore.collection('suscripciones').doc(id).update(datos);
-    });
+  // Eliminar suscripción
+  eliminarSuscripcion(id: string): Promise<void> {
+    return this.afs.collection('suscripciones').doc(id).delete();
   }
 
-  // Activar o desactivar
-  activarDesactivar(id: string, estado: boolean) {
-    return runInInjectionContext(this.injector, () => {
-      return this.firestore.collection('suscripciones').doc(id).update({ activa: estado });
-    });
+  // Activar o desactivar suscripción
+  activarDesactivar(id: string, activa: boolean): Promise<void> {
+    return this.afs.collection('suscripciones').doc(id).update({ activa });
   }
 
-  // Eliminar
-  eliminarSuscripcion(id: string) {
-    return runInInjectionContext(this.injector, () => {
-      return this.firestore.collection('suscripciones').doc(id).delete();
-    });
+  // Validar existencia de usuario por CI
+  validarCI(ci: string): Observable<boolean> {
+    return this.afs.collection<UsuarioModelo>('usuarios', ref => ref.where('ci', '==', ci))
+      .valueChanges()
+      .pipe(
+        map(usuarios => usuarios.length > 0),
+        first()
+      );
   }
 
   // Obtener suscripción activa de un usuario
-  obtenerSuscripcionActiva(uidUsuario: string): Observable<SuscripcionModelo | null> {
-    return runInInjectionContext(this.injector, () => {
-      return this.firestore
-        .collection<SuscripcionModelo>('suscripciones', ref =>
-          ref.where('uidUsuario', '==', uidUsuario)
-             .where('activa', '==', true)
-        )
-        .valueChanges({ idField: 'id' })
-        .pipe(map(arr => arr.length ? arr[0] : null));
-    });
+  obtenerSuscripcionActiva(ciUsuario: string): Observable<SuscripcionModelo | null> {
+    return this.afs.collection<SuscripcionModelo>('suscripciones', ref =>
+      ref.where('UsuarioModeloCi', '==', ciUsuario)
+         .where('activa', '==', true)
+    )
+    .valueChanges({ idField: 'id' })
+    .pipe(
+      map(arr => arr.length ? arr[0] : null),
+      first()
+    );
   }
+
+  // Obtener usuario por CI
+  obtenerUsuarioPorCI(ci: string): Observable<UsuarioModelo | null> {
+    return this.afs.collection<UsuarioModelo>('usuarios', ref =>
+      ref.where('ci', '==', ci)
+    )
+    .valueChanges()
+    .pipe(
+      map(arr => arr.length ? arr[0] : null),
+      first()
+    );
+  }
+
+  // Obtener la última suscripción (por fechaFin más reciente)
+  obtenerUltimaSuscripcion(ciUsuario: string): Observable<SuscripcionModelo | null> {
+    return this.afs.collection<SuscripcionModelo>('suscripciones', ref =>
+      ref.where('UsuarioModeloCi', '==', ciUsuario)
+         .orderBy('fechaFin', 'desc')
+         .limit(1)
+    )
+    .valueChanges({ idField: 'id' })
+    .pipe(
+      map(arr => arr.length ? arr[0] : null),
+      first()
+    );
+  }
+
+  // Renovar suscripción: desactiva la anterior y crea una nueva
+  async renovarSuscripcion(
+    suscripcionAnterior: SuscripcionModelo,
+    tipo: 'MENSUAL' | 'TRIMESTRAL' | 'ANUAL',
+    fechaInicio: Date,
+    fechaFin: Date
+  ): Promise<SuscripcionModelo> {
+
+    // 1️⃣ Desactivar la anterior si está activa
+    if (suscripcionAnterior.activa && suscripcionAnterior.id) {
+      await this.activarDesactivar(suscripcionAnterior.id, false);
+    }
+
+    // 2️⃣ Crear la nueva suscripción
+    const nuevaSuscripcion: SuscripcionModelo = {
+      UsuarioModeloCi: suscripcionAnterior.UsuarioModeloCi,
+      UsuarioModeloApellido: suscripcionAnterior.UsuarioModeloApellido,
+      tipo,
+      fechaInicio,
+      fechaFin,
+      activa: true
+    };
+
+    await this.crearSuscripcion(nuevaSuscripcion);
+    return nuevaSuscripcion;
+  }
+
 }
-
-
-
-/*   obtenerSuscripcionActiva(uidUsuario: string): Observable<Suscripcion | null> {
-    return runInInjectionContext(this.injector, () => {
-      return this.firestore
-        .collection<Suscripcion>('suscripciones', ref =>
-          ref.where('uidUsuario', '==', uidUsuario)
-             .where('activa', '==', true)
-        )
-        .valueChanges({ idField: 'id' })
-        .pipe(map(arr => arr.length ? arr[0] : null));
-    });
-  } */
-
