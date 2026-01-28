@@ -1,173 +1,144 @@
-/* ============================= */
-/* ADMIN LAYOUT */
-/* ============================= */
-
-.admin-layout {
-  display: flex;
-  height: 100vh;
-  background: #f4f6f9;
-  font-family: 'Segoe UI', Tahoma, sans-serif;
+/* =========================================
+   LAYOUT PRINCIPAL (Flexbox)
+   ========================================= */
+.admin-container {
+    display: flex;       /* Pone Sidebar y Main lado a lado */
+    height: 100vh;       /* Ocupa el 100% de la altura de la ventana */
+    width: 100vw;        /* Ocupa el 100% del ancho */
+    overflow: hidden;    /* Evita scrollbars dobles en la ventana principal */
+    background-color: #f3f4f6; /* Color de fondo suave para todo el sistema */
 }
 
-/* ============================= */
-/* SIDEBAR */
-/* ============================= */
-
+/* =========================================
+   SIDEBAR (Barra Lateral)
+   ========================================= */
 .sidebar {
-  width: 240px;
-  background: #212529;
-  color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
+    width: 260px;        /* Ancho fijo */
+    background: linear-gradient(180deg, #4e73df 10%, #224abe 100%); /* Tu degradado azul */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;      /* Evita que se aplaste si la pantalla es chica */
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    z-index: 100;        /* Se mantiene encima del contenido al hacer scroll */
+}
+
+/* Encabezado del Sidebar (Logo) */
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.sidebar-header:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Efecto visual al pasar el mouse */
 }
 
 .brand {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 30px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
+/* Navegación */
+.sidebar-nav {
+    flex-grow: 1;        /* Ocupa todo el espacio disponible verticalmente */
+    overflow-y: auto;    /* Scrollea solo el menú si es muy largo */
+    padding-top: 1.5rem;
 }
 
-.sidebar nav a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #adb5bd;
-  text-decoration: none;
-  padding: 10px 12px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  font-weight: 500;
-  transition: 0.2s;
+/* Títulos de Sección (Gestión de Socios, etc.) */
+.nav-section {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.5rem 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.5px;
 }
 
-.sidebar nav a i {
-  font-size: 1.1rem;
+/* Enlaces (Botones del menú) */
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.9rem 1.5rem;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    border-left: 4px solid transparent; /* Línea invisible a la izquierda */
+    cursor: pointer;
+    font-size: 0.95rem;
 }
 
-.sidebar nav a:hover,
-.sidebar nav a.active {
-  background: #0d6efd;
-  color: white;
+.nav-link:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding-left: 1.8rem; /* Pequeño desplazamiento a la derecha */
 }
 
-/* ============================= */
-/* MAIN CONTENT */
-/* ============================= */
-
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+/* Estado Activo (Cuando estás en esa página) */
+.nav-link.active {
+    background-color: #f8f9fa;
+    color: #4e73df;
+    border-left-color: #fbceb5; /* Un detalle de color si quieres, o el mismo azul */
+    font-weight: 700;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-/* ============================= */
-/* TOPBAR */
-/* ============================= */
-
-.topbar {
-  background: white;
-  padding: 15px 25px;
-  border-bottom: 1px solid #dee2e6;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 500;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+.icon {
+    width: 24px;
+    text-align: center;
+    margin-right: 12px;
 }
 
-.topbar h3 {
-  margin: 0;
+/* Footer del Sidebar */
+.sidebar-footer {
+    padding: 1.5rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* ============================= */
-/* CONTENT AREA */
-/* ============================= */
-
-.content {
-  flex: 1;
-  padding: 25px;
-  overflow-y: auto;
-  background: #f4f6f9;
-}
-
-/* ============================= */
-/* BUTTONS */
-/* ============================= */
-
-button {
-  font-family: inherit;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button.btn-outline-danger {
-  background: transparent;
-  color: #dc3545;
-  border: 1px solid #dc3545;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-}
-
-button.btn-outline-danger:hover {
-  background: #dc3545;
-  color: white;
-}
-
-/* ============================= */
-/* ICONS (Bootstrap Icons) */
-/* ============================= */
-
-.sidebar nav a i {
-  display: inline-block;
-  min-width: 20px;
-  text-align: center;
-}
-
-/* ============================= */
-/* SCROLLBAR PERSONALIZADO */
-/* ============================= */
-
-.content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.content::-webkit-scrollbar-track {
-  background: #e9ecef;
-  border-radius: 6px;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background: #adb5bd;
-  border-radius: 6px;
-}
-
-.content::-webkit-scrollbar-thumb:hover {
-  background: #6c757d;
-}
-
-/* ============================= */
-/* RESPONSIVE */
-/* ============================= */
-
-@media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
-
-  .admin-layout {
+/* =========================================
+   CONTENIDO PRINCIPAL (Derecha)
+   ========================================= */
+.main-content {
+    flex-grow: 1;        /* Ocupa todo el espacio restante a la derecha */
+    display: flex;
     flex-direction: column;
-  }
+    overflow: hidden;    /* Importante para el scroll interno */
+    position: relative;
+}
 
-  .topbar {
+/* Barra Superior Blanca */
+.topbar {
+    background-color: white;
+    height: 70px;
+    padding: 0 2rem;
+    display: flex;
     justify-content: space-between;
-  }
+    align-items: center;
+    border-bottom: 1px solid #e3e6f0;
+    z-index: 50;
+}
+
+.page-title {
+    margin: 0;
+    font-weight: 700;
+    color: #5a5c69;
+    font-size: 1.25rem;
+}
+
+/* Wrapper del contenido cambiante (Router Outlet) */
+.content-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;    /* AQUÍ ES DONDE OCURRE EL SCROLL DE TUS PÁGINAS */
+    padding: 2rem;
+    scroll-behavior: smooth;
 }

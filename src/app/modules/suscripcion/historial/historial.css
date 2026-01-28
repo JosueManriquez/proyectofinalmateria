@@ -1,52 +1,72 @@
-.container {
-    max-width: 1200px;
-    padding-bottom: 2rem;
+/* Animación */
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
 }
 
-.card {
-    border: none;
-    border-radius: 10px;
-    overflow: hidden; /* Para las esquinas redondeadas de la tabla */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.search-card {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
+/* Avatar */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
 }
 
+.bg-gradient-purple {
+    background: linear-gradient(135deg, #6f42c1 0%, #4e2a84 100%);
+}
+
+/* Badges Modernos */
+.bg-success-subtle {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    padding: 0.4em 0.8em;
+}
+
+.bg-secondary-subtle {
+    background-color: #e2e3e5;
+    color: #41464b;
+    padding: 0.4em 0.8em;
+}
+
+/* Tabla */
 .table th {
-    font-weight: 600;
-    color: #555;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    padding: 1rem;
-    border-bottom: 2px solid #eee;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+    border-bottom: 1px solid #e3e6f0;
 }
 
 .table td {
+    padding: 0.8rem 0.5rem;
     vertical-align: middle;
-    padding: 1rem;
-    font-size: 0.95rem;
 }
 
-.badge {
-    padding: 0.5em 0.8em;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    border-radius: 4px;
+.transition-row:hover {
+    background-color: #f8f9fc;
 }
 
-.bg-info {
-    background-color: #e3f2fd !important;
-    color: #0c5460 !important;
+/* Tipografía */
+.text-xs { font-size: 0.85rem; }
+.text-xxs { font-size: 0.75rem; }
+.text-light-gray { color: #d1d3e2; }
+
+/* Botones */
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-outline-danger {
-    border: 1px solid #dc3545;
-    color: #dc3545;
-}
-
-.btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: white;
-}
+/* Inputs */
+.input-group-text { background-color: #f8f9fa; }
+.form-control:focus { box-shadow: none; border-color: #6f42c1; }

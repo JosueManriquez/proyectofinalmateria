@@ -1,62 +1,54 @@
-<div class="admin-layout">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h4 class="brand">Administrador</h4>
+<div class="admin-container">
+  
+  <aside class="sidebar shadow">
+    
+    <div class="sidebar-header" routerLink="/admin" style="cursor: pointer;" title="Ir al Inicio">
+      <div class="brand">
+        <i class="fas fa-dumbbell me-2"></i> GymSystem
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      
+      <div class="nav-section">GESTIÓN DE SOCIOS</div>
+      
+      <a routerLink="/admin/usuarios" routerLinkActive="active" 
+         [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <i class="fas fa-users icon"></i> Listar Usuarios
+      </a>
+      <a routerLink="/admin/usuarios/crear" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-user-plus icon"></i> Nuevo Usuario
+      </a>
 
-    <nav>
-      <!-- Usuarios -->
-      <a routerLink="usuarios" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        <i class="bi bi-people"></i> Listar Usuarios
+      <div class="nav-section mt-3">MEMBRESÍAS</div>
+      
+      <a routerLink="/admin/suscripcion/renovar-suscripcion" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-sync-alt icon"></i> Renovar / Vender
       </a>
-      <a routerLink="usuarios/crear" routerLinkActive="active">
-        <i class="bi bi-person-plus"></i> Crear Usuario
+      <a routerLink="/admin/suscripcion/historial" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-history icon"></i> Historial Pagos
       </a>
+      
+      </nav>
 
-      <!-- Roles y desactivación -->
-      <!--<a routerLink="cambiar-rol" routerLinkActive="active">
-        <i class="bi bi-people"></i> Editar Roles de Usuarios
-      </a>
-       <a routerLink="desactivar-usuario" routerLinkActive="active">
-        <i class="bi bi-person-check"></i> Desactivar Usuarios
-      </a> -->
-
-      <!-- Productos / Categorías -->
-      <!-- <a routerLink="gestionar-categoria" routerLinkActive="active">
-        <i class="bi bi-gear"></i> Gestionar Categoria
-      </a>
-      <a routerLink="agregar-producto" routerLinkActive="active">
-        <i class="bi bi-gear"></i> Agregar producto
-      </a>
-      <a routerLink="gestionar-producto" routerLinkActive="active">
-        <i class="bi bi-gear"></i> Gestionar Productos
-      </a> -->
-
-      <!-- suscripcion -->
-
-      <a routerLink="suscripcion/crear-suscripcion" routerLinkActive="active">
-        <i class="bi bi-gear"></i> Crear Suscripción
-      </a>
-      <a routerLink="suscripcion/renovar-suscripcion" routerLinkActive="active">
-        <i class="bi bi-gear"></i> Renovar Suscripción
-      </a>
-      <a routerLink="suscripcion/historial" routerLinkActive="active">
-        <i class="bi bi-gear"></i> Historial
-      </a>
-    </nav>
+    <div class="sidebar-footer">
+      <small>By Josue</small>
+    </div>
   </aside>
 
-  <!-- Main content -->
-  <main class="main">
-    <header class="topbar">
-      <h3>Panel de Administración</h3>
-      <button class="btn btn-outline-danger btn-sm" (click)="cerrarSesion()">
-        Cerrar sesión
+  <main class="main-content">
+    
+    <header class="topbar shadow-sm">
+      <h4 class="page-title">Panel de Administración</h4>
+      <button class="btn btn-outline-danger btn-sm d-flex align-items-center" (click)="cerrarSesion()">
+        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
       </button>
     </header>
 
-    <section class="content">
-      <!-- Aquí cargan todos los hijos del admin -->
+    <div class="content-wrapper">
       <router-outlet></router-outlet>
-    </section>
+    </div>
+
   </main>
+
 </div>

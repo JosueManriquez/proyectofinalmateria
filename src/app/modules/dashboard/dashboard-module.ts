@@ -12,7 +12,7 @@ import { GestionarProducto } from './gestionar-producto/gestionar-producto';
 import { ListarUsuarios } from './bienvenida-admin/usuarios/listar-usuarios/listar-usuarios';
 import { CrearUsuario } from './bienvenida-admin/usuarios/crear-usuario/crear-usuario';
 import { EditarUsuario } from './bienvenida-admin/usuarios/editar-usuario/editar-usuario';
-
+import { DashboardHome } from './dashboard-home/dashboard-home'; // <--- 1. IMPORTAR
 @NgModule({
   declarations: [
     BienvenidaAdmin,
@@ -25,6 +25,8 @@ import { EditarUsuario } from './bienvenida-admin/usuarios/editar-usuario/editar
     ListarUsuarios,
     CrearUsuario,
     EditarUsuario,
+    DashboardHome,
+    
 
   ],
   imports: [

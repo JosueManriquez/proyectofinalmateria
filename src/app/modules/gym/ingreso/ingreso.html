@@ -1,51 +1,79 @@
-<div class="ingreso-container">
+<div class="ingreso-container fade-in">
   
-  <div class="card-ingreso">
-    <h2 class="title">Control de Acceso</h2>
-    <p class="subtitle">Ingresa tu C.I. para registrar asistencia</p>
-
-    <div class="input-group">
-      <input 
-        type="text" 
-        [(ngModel)]="ci" 
-        (keyup.enter)="registrarIngreso()" 
-        placeholder="Cédula de Identidad" 
-        class="input-ci"
-        autofocus
-      />
-      <button (click)="registrarIngreso()" class="btn-ingresar">
-        Marcar
-      </button>
+  <div class="card-ingreso shadow-lg">
+    
+    <div class="status-bar" 
+         [ngClass]="{
+           'bg-primary': !mensaje,
+           'bg-success': mensaje && !esError,
+           'bg-danger': mensaje && esError
+         }">
     </div>
 
-    <div class="mensaje-box" *ngIf="mensaje" [ngClass]="{'error': esError, 'success': !esError}">
-      {{ mensaje }}
-    </div>
-
-    <div class="usuario-info fade-in" *ngIf="usuarioEncontrado">
-      <div class="info-header">
-        <div class="avatar-circle">
-          {{ usuarioEncontrado.nombre.charAt(0) }}
-        </div>
-        <div>
-          <h3>{{ usuarioEncontrado.nombre }} {{ usuarioEncontrado.apellido }}</h3>
-          <span class="badge-rol">{{ usuarioEncontrado.rol | uppercase }}</span>
-        </div>
-      </div>
+    <div class="card-body p-4">
       
-      <div class="info-details" *ngIf="!esError">
-        <div class="stat">
-          <span class="label">Días Restantes</span>
-          <span class="value" [ngClass]="diasRestantes < 5 ? 'text-danger' : 'text-success'">
-            {{ diasRestantes }}
-          </span>
-        </div>
-        <div class="stat">
-          <span class="label">Estado</span>
-          <span class="value text-success">HABILITADO</span>
-        </div>
+      <div class="text-center mb-4">
+        <h2 class="title fw-bold text-dark">Control de Acceso</h2>
+        <p class="subtitle text-muted small">Escribe el CI del socio</p>
       </div>
-    </div>
 
+      <div class="input-group mb-4 shadow-sm rounded-3 overflow-hidden">
+        <span class="input-group-text bg-white border-0 ps-3">
+          <i class="fas fa-keyboard text-muted"></i>
+        </span>
+        <input 
+          #ciInput
+          type="text" 
+          [(ngModel)]="ci" 
+          (keyup.enter)="registrarIngreso($event)" 
+          placeholder="Escribe el CI aquí..." 
+          class="form-control border-0 py-3 fs-5 fw-bold text-center"
+          autofocus
+          autocomplete="off"
+        />
+        <button type="button" (click)="registrarIngreso($event)" class="btn btn-primary px-4 fw-bold">
+          <i class="fas fa-check"></i>
+        </button>
+      </div>
+
+      <div *ngIf="mensaje" class="alert fw-bold text-center mb-4 fade-in-up"
+           [ngClass]="esError ? 'alert-danger' : 'alert-success'">
+        <i class="fas me-2" [ngClass]="esError ? 'fa-times-circle' : 'fa-check-circle'"></i>
+        {{ mensaje }}
+      </div>
+
+      <div class="usuario-info fade-in-up" *ngIf="usuarioEncontrado">
+        
+        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+          <div class="avatar-circle shadow-sm me-3" 
+               [ngClass]="esError ? 'bg-danger' : 'bg-primary'">
+            {{ usuarioEncontrado.nombre.charAt(0) | uppercase }}
+          </div>
+          
+          <div>
+            <h4 class="mb-0 fw-bold text-dark">{{ usuarioEncontrado.nombre }}</h4>
+            <h4 class="mb-0 text-secondary">{{ usuarioEncontrado.apellido }}</h4>
+            <span class="badge bg-light text-dark border mt-1">{{ usuarioEncontrado.rol | uppercase }}</span>
+          </div>
+        </div>
+        
+        <div class="row text-center" *ngIf="!esError || diasRestantes < 0">
+          <div class="col-6 border-end">
+            <small class="text-muted fw-bold text-uppercase">Vencimiento</small>
+            <div class="fs-4 fw-bold" [ngClass]="diasRestantes < 5 ? 'text-danger' : 'text-success'">
+              {{ diasRestantes }} Días
+            </div>
+          </div>
+          <div class="col-6">
+            <small class="text-muted fw-bold text-uppercase">Estado</small>
+            <div class="fs-4 fw-bold text-success">
+              ACTIVO
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
   </div>
 </div>

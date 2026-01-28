@@ -17,6 +17,9 @@ import { RenovarSuscripcion } from './modules/suscripcion/renovar-suscripcion/re
 import { Historial } from './modules/suscripcion/historial/historial';
 import { CrearSuscripcion } from './modules/suscripcion/crear-suscripcion/crear-suscripcion';
 
+// 1. NUEVO IMPORT
+import { DashboardHome } from './modules/dashboard/dashboard-home/dashboard-home'; 
+
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'registrar', component: Registrar },
@@ -24,41 +27,32 @@ const routes: Routes = [
   {
     path: 'admin',
     component: BienvenidaAdmin,
-    children: [{ path: 'cambiar-rol', component: CambiarRol },
-    {
-      path: 'desactivar-usuario',
-      component: DesactivarUsuario
-    },
-    {
-      path: 'gestionar-categoria',
-      component: GestionarCategoria
-    },
-    {
-      path: 'agregar-producto',
-      component: AgregarProducto
-    },
-    {
-      path: 'gestionar-producto',
-      component: GestionarProducto
-    },
-    { path: 'usuarios', component: ListarUsuarios },
-    { path: 'usuarios/crear', component: CrearUsuario },
-    {
-      path: 'usuarios/editar/:id',
-      component: EditarUsuario
-    },
+    children: [
+      
+      // 2. NUEVA RUTA PRINCIPAL (Dashboard Home)
+      // Esta es la clave: cuando entres a /admin, cargará esto primero.
+      { path: '', component: DashboardHome }, 
 
-      // suscricion
-    { path: 'suscripcion/crear-suscripcion', component: CrearSuscripcion },
-    { path: 'suscripcion/renovar-suscripcion', component: RenovarSuscripcion },
-    { path: 'suscripcion/historial', component: Historial }
+      { path: 'cambiar-rol', component: CambiarRol },
+      { path: 'desactivar-usuario', component: DesactivarUsuario },
+      { path: 'gestionar-categoria', component: GestionarCategoria },
+      { path: 'agregar-producto', component: AgregarProducto },
+      { path: 'gestionar-producto', component: GestionarProducto },
+      
+      // Usuarios
+      { path: 'usuarios', component: ListarUsuarios },
+      { path: 'usuarios/crear', component: CrearUsuario },
+      { path: 'usuarios/editar/:id', component: EditarUsuario },
+
+      // Suscripcion
+      { path: 'suscripcion/crear-suscripcion', component: CrearSuscripcion },
+      { path: 'suscripcion/renovar-suscripcion', component: RenovarSuscripcion },
+      { path: 'suscripcion/historial', component: Historial }
     ]
   },
 
   { path: 'usuario', component: BienvenidaUsuario },
-
   { path: 'ingreso', component: Ingreso }
-
 ];
 
 @NgModule({

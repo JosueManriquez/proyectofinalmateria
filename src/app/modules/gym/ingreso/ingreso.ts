@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { UsuarioService } from '../../../services/usuario';
 import { SuscripcionService } from '../../../services/suscripcion';
 import { AsistenciaService } from '../../../services/asistencia';
@@ -12,15 +12,15 @@ import { Timestamp } from 'firebase/firestore';
   templateUrl: './ingreso.html',
   styleUrls: ['./ingreso.css']
 })
-export class Ingreso implements OnInit {
+export class Ingreso implements OnInit, AfterViewInit {
+
+  @ViewChild('ciInput') ciInput!: ElementRef;
 
   ci: string = '';
   mensaje: string = '';
-  esError: boolean = false; // Para pintar el mensaje de rojo o verde
+  esError: boolean = false;
   usuarioEncontrado: UsuarioModelo | null = null;
   diasRestantes: number = 0;
-
-  // Para limpiar la pantalla automáticamente
   private timeoutId: any;
 
   constructor(
@@ -30,13 +30,27 @@ export class Ingreso implements OnInit {
     private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit(): void {
-    // Foco inicial si lo deseas
+  ngOnInit(): void { }
+
+  ngAfterViewInit(): void {
+    this.enfocarInput();
   }
 
-  async registrarIngreso() {
-    // 1. Limpieza visual inmediata
-    this.limpiarEstado(false);
+  // CORRECCIÓN AQUÍ: Agregamos "event?: any" para que el HTML no de error
+  async registrarIngreso(event?: any) {
+
+    // Si nos llega el evento (desde el enter o click), prevenimos recarga por seguridad
+    if (event) {
+      try {
+        event.preventDefault();
+        event.stopPropagation();
+      } catch (e) {
+        // Ignorar si el evento no es cancelable
+      }
+    }
+
+    // Lógica del doble click: No enfocamos el input inmediatamente (false)
+    this.limpiarEstado(false, false);
 
     if (!this.ci) {
       this.mostrarMensaje('Ingresa el número de C.I.', true);
@@ -44,65 +58,41 @@ export class Ingreso implements OnInit {
     }
 
     try {
-      // 🚀 OPTIMIZACIÓN 1: PARALELISMO
-      // Lanzamos la búsqueda de Usuario y Suscripción AL MISMO TIEMPO.
-      // No esperamos a una para lanzar la otra.
       const usuarioPromise = firstValueFrom(this.usuarioService.obtenerUsuarioPorCI(this.ci));
       const suscripcionPromise = firstValueFrom(this.suscripcionService.obtenerSuscripcionActiva(this.ci));
 
-      // Esperamos a que ambas terminen (tardará solo lo que tarde la más lenta, no la suma de las dos)
       const [usuario, suscripcion] = await Promise.all([usuarioPromise, suscripcionPromise]);
-
-      // --- Validaciones (ocurren instantáneamente cuando llegan los datos) ---
 
       if (!usuario) {
         this.mostrarMensaje('Usuario no registrado', true);
         return;
       }
 
-      if (!usuario.uid) {
-        this.mostrarMensaje('Error: Usuario sin UID', true);
-        return;
-      }
+      this.usuarioEncontrado = usuario;
 
       if (!suscripcion) {
         this.mostrarMensaje('⛔ SIN SUSCRIPCIÓN ACTIVA', true);
-        this.usuarioEncontrado = usuario; // Mostramos quién es para que sepa que lo reconocimos
         return;
       }
 
-      // Validación de Fechas
       const hoy = new Date();
-      let fechaFin: Date;
+      const fechaFin = suscripcion.fechaFin instanceof Timestamp
+        ? suscripcion.fechaFin.toDate()
+        : new Date(suscripcion.fechaFin);
 
-      if (suscripcion.fechaFin instanceof Timestamp) {
-        fechaFin = suscripcion.fechaFin.toDate();
-      } else {
-        fechaFin = new Date(suscripcion.fechaFin);
-      }
-
-      this.diasRestantes = Math.ceil(
-        (fechaFin.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24)
-      );
+      this.diasRestantes = Math.ceil((fechaFin.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
 
       if (this.diasRestantes < 0) {
         this.mostrarMensaje('⛔ SUSCRIPCIÓN VENCIDA', true);
-        this.usuarioEncontrado = usuario;
         return;
       }
 
-      // ✅ ÉXITO VISUAL INMEDIATO
-      // Mostramos los datos YA, sin esperar a que se guarde en la BD
-      this.usuarioEncontrado = usuario;
+      // Éxito
       this.mostrarMensaje(`✅ BIENVENIDO`, false);
-      this.programarLimpieza(); // Timer de 5s
 
-      // 🚀 OPTIMIZACIÓN 2: GUARDADO EN SEGUNDO PLANO
-      // Mandamos a guardar la asistencia, pero NO ponemos 'await'.
-      // Dejamos que Firebase lo haga a su ritmo mientras el usuario ya entró.
-      this.asistenciaService.registrarEntrada(usuario.uid, usuario.ci)
-        .then(() => console.log('Asistencia guardada background'))
-        .catch(err => console.error('Error guardando asistencia', err));
+      if (usuario.uid) {
+        this.asistenciaService.registrarEntrada(usuario.uid, usuario.ci).catch(console.error);
+      }
 
     } catch (error) {
       console.error(error);
@@ -110,25 +100,42 @@ export class Ingreso implements OnInit {
     }
   }
 
-  // Helpers visuales
   mostrarMensaje(texto: string, error: boolean) {
     this.mensaje = texto;
     this.esError = error;
     this.cdr.detectChanges();
+    this.programarLimpieza(error ? 5000 : 8000);//es el tiempo que tarda en limpiar el mensaje,
+    //  ahora 5 si hay error y 8 si todo esta bien
+
+    // Al finalizar el proceso, AHÍ SÍ devolvemos el foco al input
+    this.enfocarInput();
   }
 
-  limpiarEstado(borrarCi: boolean = true) {
+  limpiarEstado(borrarCi: boolean = true, enfocar: boolean = true) {
     this.mensaje = '';
     this.usuarioEncontrado = null;
     this.diasRestantes = 0;
+
     if (borrarCi) this.ci = '';
     if (this.timeoutId) clearTimeout(this.timeoutId);
+
+    // Solo enfocamos si se pide explícitamente
+    if (enfocar) {
+      this.enfocarInput();
+    }
   }
 
-  programarLimpieza() {
+  programarLimpieza(tiempo: number) {
+    if (this.timeoutId) clearTimeout(this.timeoutId);
     this.timeoutId = setTimeout(() => {
-      this.limpiarEstado(true);
+      this.limpiarEstado(true, true);
       this.cdr.detectChanges();
-    }, 10000); // 5 segundos
+    }, tiempo);
+  }
+
+  enfocarInput() {
+    setTimeout(() => {
+      if (this.ciInput) this.ciInput.nativeElement.focus();
+    }, 100);
   }
 }

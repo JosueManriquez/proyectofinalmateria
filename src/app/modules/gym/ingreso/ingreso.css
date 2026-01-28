@@ -1,161 +1,87 @@
+/* Fondo General */
 .ingreso-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  background-color: #f4f6f9;
+  min-height: 85vh; /* Centrado verticalmente */
+  background-color: #f3f4f6; /* Gris muy suave, moderno */
+  padding: 1rem;
 }
 
+/* Tarjeta Principal */
 .card-ingreso {
   background: white;
-  padding: 2.5rem;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-radius: 16px; /* Bordes más redondeados */
   width: 100%;
-  max-width: 450px;
-  text-align: center;
+  max-width: 480px; /* Ancho ideal */
+  overflow: hidden; /* Para que la barra de estado respete los bordes */
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
+/* Barra Superior de Estado (La clave del diseño) */
+.status-bar {
+  height: 8px;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+/* Títulos */
 .title {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
-.subtitle {
-  color: #7f8c8d;
-  margin-bottom: 2rem;
-}
-
+/* Input Moderno */
 .input-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 1.5rem;
-}
-
-.input-ci {
-  flex: 1;
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  text-align: center;
-  outline: none;
+  border: 2px solid #e3e6f0;
   transition: border-color 0.3s;
 }
 
-.input-ci:focus {
-  border-color: #3498db;
+.input-group:focus-within {
+  border-color: #4e73df; /* Color primario al enfocar */
+  box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
 }
 
-.btn-ingresar {
-  padding: 10px 20px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s;
+.form-control:focus {
+  box-shadow: none;
+  background-color: transparent;
 }
 
-.btn-ingresar:hover {
-  background-color: #2980b9;
-}
-
-/* Mensajes */
-.mensaje-box {
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-}
-
-.mensaje-box.error {
-  background-color: #fadbd8;
-  color: #c0392b;
-  border: 1px solid #e6b0aa;
-}
-
-.mensaje-box.success {
-  background-color: #d4efdf;
-  color: #196f3d;
-  border: 1px solid #a9dfbf;
-}
-
-/* Info Usuario */
-.usuario-info {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 1.5rem;
-  text-align: left;
-  border: 1px solid #e9ecef;
-}
-
-.info-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1rem;
-}
-
+/* Avatar */
 .avatar-circle {
-  width: 50px;
-  height: 50px;
-  background-color: #34495e;
+  width: 60px;
+  height: 60px;
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.8rem;
+  font-weight: 700;
+  transition: background-color 0.3s;
 }
 
-.info-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.badge-rol {
-  font-size: 0.75rem;
-  background: #ecf0f1;
-  padding: 2px 8px;
-  border-radius: 4px;
-  color: #7f8c8d;
-}
-
-.info-details {
-  display: flex;
-  justify-content: space-between;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat .label {
-  font-size: 0.8rem;
-  color: #95a5a6;
-}
-
-.stat .value {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.text-danger { color: #e74c3c; }
-.text-success { color: #27ae60; }
-
-/* Animación */
+/* Animaciones */
 .fade-in {
-  animation: fadeIn 0.5s ease-in;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }

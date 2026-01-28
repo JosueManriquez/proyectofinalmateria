@@ -151,4 +151,11 @@ export class SuscripcionService {
       return nuevaSuscripcion;
     });
   }
+  obtenerHistorialGlobal(): Observable<SuscripcionModelo[]> {
+    return runInInjectionContext(this.injector, () => {
+      return this.afs
+        .collection<SuscripcionModelo>('suscripciones')
+        .valueChanges({ idField: 'id' });
+    });
+  }
 }

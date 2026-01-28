@@ -1,73 +1,111 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Historial General de Suscripciones</h2>
-  </div>
+<div class="container mt-4 fade-in">
 
-  <div class="card p-3 mb-4 search-card">
-    <div class="row">
-      <div class="col-md-6">
-        <input 
-          type="text" 
-          class="form-control" 
-          placeholder="Buscar por CI o Apellido..." 
-          [(ngModel)]="textoBusqueda"
-          (input)="filtrar()">
-      </div>
-      <div class="col-md-6 text-end text-muted align-self-center">
-        <small>Total registros: {{ suscripcionesFiltradas.length }}</small>
-      </div>
+    <div class="mb-4">
+        <h2 class="fw-bold text-primary mb-0"><i class="fa fa-list-alt me-2"></i>Historial General</h2>
+        <p class="text-muted">Registro completo de todas las suscripciones vendidas.</p>
     </div>
-  </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover mb-0">
-          <thead class="bg-light">
-            <tr>
-              <th>CI Cliente</th>
-              <th>Apellido</th>
-              <th>Plan</th>
-              <th>Inicio</th>
-              <th>Fin</th>
-              <th>Estado</th>
-              <th class="text-end">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngIf="cargando">
-              <td colspan="7" class="text-center py-4">Cargando datos...</td>
-            </tr>
-
-            <tr *ngFor="let s of suscripcionesFiltradas">
-              <td><strong>{{ s.UsuarioModeloCi }}</strong></td>
-              <td>{{ s.UsuarioModeloApellido }}</td>
-              <td>
-                <span class="badge bg-info text-dark">{{ s.tipo }}</span>
-              </td>
-              <td>{{ s.fechaInicio | date:'dd/MM/yyyy' }}</td>
-              <td>{{ s.fechaFin | date:'dd/MM/yyyy' }}</td>
-              <td>
-                <span class="badge" 
-                  [ngClass]="s.activa ? 'bg-success' : 'bg-secondary'">
-                  {{ s.activa ? 'ACTIVA' : 'VENCIDA' }}
-                </span>
-              </td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-danger" (click)="eliminar(s.id)" title="Eliminar registro">
-                  <i class="fa fa-trash"></i> Eliminar
-                </button>
-              </td>
-            </tr>
-
-            <tr *ngIf="!cargando && suscripcionesFiltradas.length === 0">
-              <td colspan="7" class="text-center py-4 text-muted">
-                No se encontraron registros.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="card shadow-lg border-0 mb-4 bg-white rounded-lg">
+        <div class="card-body p-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control bg-light border-start-0"
+                            placeholder="Buscar por CI o Apellido..." [(ngModel)]="textoBusqueda" (input)="filtrar()">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <span class="badge bg-light text-dark border px-4 py-2 rounded-pill fs-6">
+                        Total Registros: <strong>{{ suscripcionesFiltradas.length }}</strong>
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary text-uppercase text-xs fw-bold">
+                        <tr>
+                            <th class="ps-4">Cliente</th>
+                            <th>Cédula (CI)</th>
+                            <th>Plan</th>
+                            <th class="text-center">Fechas (Inicio - Fin)</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr *ngIf="cargando">
+                            <td colspan="6" class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2 text-muted small">Cargando historial...</p>
+                            </td>
+                        </tr>
+
+                        <tr *ngFor="let s of suscripcionesFiltradas" class="transition-row">
+
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-3 bg-gradient-purple text-white shadow-sm">
+                                        {{ s.UsuarioModeloApellido.charAt(0) | uppercase }}
+                                    </div>
+                                    <span class="fw-bold text-dark">{{ s.UsuarioModeloApellido }}</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="fw-bold text-secondary"><i class="fa fa-id-card me-1 opacity-50"></i> {{
+                                    s.UsuarioModeloCi }}</span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    {{ s.tipo }}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <div class="d-flex flex-column">
+                                    <span class="text-dark fw-bold text-xs">{{ s.fechaInicio | date:'dd/MM/yyyy'
+                                        }}</span>
+                                    <span class="text-muted text-xxs">hasta</span>
+                                    <span class="text-dark fw-bold text-xs">{{ s.fechaFin | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="badge rounded-pill"
+                                    [ngClass]="s.activa ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                                    {{ s.activa ? 'ACTIVA' : 'VENCIDA' }}
+                                </span>
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <button class="btn btn-danger btn-sm btn-icon rounded-circle shadow-sm transition-icon"
+                                    (click)="eliminar(s.id)" title="Eliminar registro permanentemente">
+                                    <i class="fas fa-trash text-white fs-6"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+                        <tr *ngIf="!cargando && suscripcionesFiltradas.length === 0">
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="fa fa-search fa-2x mb-3 text-light-gray"></i>
+                                <p class="mb-0">No se encontraron resultados.</p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

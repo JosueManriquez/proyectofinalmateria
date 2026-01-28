@@ -8,5 +8,6 @@ import { serverRoutes } from './app.routes.server';
   imports: [AppModule],
   providers: [provideServerRendering(withRoutes(serverRoutes))],
   bootstrap: [App],
+  
 })
 export class AppServerModule {}
