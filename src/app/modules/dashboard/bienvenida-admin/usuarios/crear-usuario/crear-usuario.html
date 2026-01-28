@@ -1,25 +1,111 @@
-<form (ngSubmit)="crear()">
-  <div>
-    <input type="text" placeholder="Nombre" [(ngModel)]="nombre" name="nombre" required>
+<div class="container mt-5 fade-in">
+  <div class="row justify-content-center">
+    <div class="col-lg-7 col-md-9">
+      
+      <div class="card shadow-lg border-0 rounded-lg">
+        
+        <div class="card-header bg-primary text-white text-center py-4 header-gradient">
+          <div class="mb-2">
+            <i class="fa fa-user-plus fa-3x"></i>
+          </div>
+          <h3 class="mb-0 fw-bold">Nuevo Usuario</h3>
+          <p class="mb-0 opacity-75">Registra un nuevo miembro en el sistema</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          
+          <form [formGroup]="crearForm" (ngSubmit)="crear()">
+            
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label text-muted fw-bold small">NOMBRE</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="fa fa-user text-muted"></i></span>
+                  <input type="text" class="form-control" formControlName="nombre" placeholder="Ej: Juan">
+                </div>
+                <div *ngIf="crearForm.get('nombre')?.touched && crearForm.get('nombre')?.invalid" class="text-danger small mt-1">
+                  Nombre requerido (mín. 3 letras)
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label text-muted fw-bold small">APELLIDO</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="fa fa-user text-muted"></i></span>
+                  <input type="text" class="form-control" formControlName="apellido" placeholder="Ej: Perez">
+                </div>
+                <div *ngIf="crearForm.get('apellido')?.touched && crearForm.get('apellido')?.invalid" class="text-danger small mt-1">
+                  Apellido requerido
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label text-muted fw-bold small">CÉDULA DE IDENTIDAD</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="fa fa-id-card text-muted"></i></span>
+                  <input type="text" class="form-control" formControlName="ci" placeholder="Solo números">
+                </div>
+                <div *ngIf="crearForm.get('ci')?.touched && crearForm.get('ci')?.invalid" class="text-danger small mt-1">
+                  CI válido requerido
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label text-muted fw-bold small">ROL DE ACCESO</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="fa fa-shield-alt text-muted"></i></span>
+                  <select class="form-select" formControlName="rol">
+                    <option value="usuario">Usuario (Estándar)</option>
+                    <option value="admin">Administrador</option>
+                    <option value="cliente">Cliente (Solo lectura)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-muted fw-bold small">CORREO ELECTRÓNICO</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fa fa-envelope text-muted"></i></span>
+                <input type="email" class="form-control" formControlName="email" placeholder="ejemplo@correo.com">
+              </div>
+              <div *ngIf="crearForm.get('email')?.touched && crearForm.get('email')?.invalid" class="text-danger small mt-1">
+                Correo inválido
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label text-muted fw-bold small">CONTRASEÑA</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fa fa-lock text-muted"></i></span>
+                <input [type]="verPassword ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Mínimo 6 caracteres">
+                <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
+                  <i class="fa" [ngClass]="verPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                </button>
+              </div>
+              <div *ngIf="crearForm.get('password')?.touched && crearForm.get('password')?.invalid" class="text-danger small mt-1">
+                La contraseña debe tener al menos 6 caracteres
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary py-2 shadow-sm fw-bold" 
+                [disabled]="crearForm.invalid || cargando">
+                <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
+                {{ cargando ? 'Registrando...' : 'Registrar Usuario' }}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      
+      <div class="text-center mt-3">
+        <a routerLink="/admin/usuarios" class="text-decoration-none text-muted">
+          <i class="fa fa-arrow-left me-1"></i> Volver a la lista
+        </a>
+      </div>
+
+    </div>
   </div>
-  <div>
-    <input type="text" placeholder="Apellido" [(ngModel)]="apellido" name="apellido" required>
-  </div>
-  <div>
-    <input type="text" placeholder="CI" [(ngModel)]="ci" name="ci" required>
-  </div>
-  <div>
-    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required>
-  </div>
-  <div>
-    <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password" required>
-  </div>
-  <div>
-    <select [(ngModel)]="rol" name="rol">
-      <option value="admin">Admin</option>
-      <option value="usuario">Usuario</option>
-      <option value="cliente">Cliente</option>
-    </select>
-  </div>
-  <button type="submit">Crear Usuario</button>
-</form>
+</div>

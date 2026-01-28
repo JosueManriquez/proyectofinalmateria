@@ -1,95 +1,147 @@
-<div class="container mt-4">
-  <h2>Renovar Suscripción</h2>
+<div class="container mt-4 fade-in">
+  
+  <div class="mb-4">
+    <h2 class="fw-bold text-primary mb-0"><i class="fa fa-sync-alt me-2"></i>Renovar Suscripción</h2>
+    <p class="text-muted">Busca un usuario y extiende su plan de acceso.</p>
+  </div>
 
-  <div class="card p-3 mb-4">
-    <form [formGroup]="searchForm" (ngSubmit)="buscarUsuario()" class="d-flex gap-2">
-      <input 
-        type="text" 
-        class="form-control" 
-        placeholder="Ingrese CI del Usuario" 
-        formControlName="ci">
-      <button type="submit" class="btn btn-primary" [disabled]="searchForm.invalid">
-        Buscar
-      </button>
-    </form>
-    <div *ngIf="mensajeError" class="text-danger mt-2">
-      {{ mensajeError }}
+  <div class="card shadow-sm border-0 mb-4 bg-white rounded-lg">
+    <div class="card-body p-4">
+      <form [formGroup]="searchForm" (ngSubmit)="buscarUsuario()">
+        <label class="form-label fw-bold text-muted small">BUSCAR CLIENTE</label>
+        <div class="input-group input-group-lg">
+          <span class="input-group-text bg-light border-end-0 text-muted">
+            <i class="fa fa-search"></i>
+          </span>
+          <input 
+            type="text" 
+            class="form-control bg-light border-start-0" 
+            placeholder="Ingrese el Número de Carnet (CI)..." 
+            formControlName="ci">
+          <button type="submit" class="btn btn-primary px-4 fw-bold" [disabled]="searchForm.invalid">
+            BUSCAR
+          </button>
+        </div>
+      </form>
+      
+      <div *ngIf="mensajeError" class="alert alert-danger mt-3 d-flex align-items-center" role="alert">
+        <i class="fa fa-exclamation-circle me-2"></i>
+        <div>{{ mensajeError }}</div>
+      </div>
     </div>
   </div>
 
-  <div *ngIf="usuarioEncontrado" class="row">
+  <div *ngIf="usuarioEncontrado" class="row fade-in">
     
-    <div class="col-md-5">
+    <div class="col-lg-5 mb-4">
       
-      <div class="card mb-3 border-info">
-        <div class="card-header bg-info text-white">Usuario Seleccionado</div>
-        <div class="card-body">
-          <h5>{{ usuarioEncontrado.nombre }} {{ usuarioEncontrado.apellido }}</h5>
-          <p class="mb-1"><strong>CI:</strong> {{ usuarioEncontrado.ci }}</p>
-          <p class="mb-0"><strong>Email:</strong> {{ usuarioEncontrado.email }}</p>
+      <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+        <div class="card-body p-0">
+          <div class="d-flex align-items-center p-4 bg-light">
+            <div class="avatar-circle me-3 bg-gradient-info text-white shadow-sm">
+              {{ usuarioEncontrado.nombre.charAt(0) | uppercase }}
+            </div>
+            <div>
+              <h5 class="mb-0 fw-bold text-dark">{{ usuarioEncontrado.nombre }} {{ usuarioEncontrado.apellido }}</h5>
+              <small class="text-muted">{{ usuarioEncontrado.email }}</small>
+            </div>
+          </div>
+          <div class="px-4 py-3 border-top">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-muted small fw-bold">CÉDULA DE IDENTIDAD</span>
+              <span class="fw-bold text-dark fs-5">{{ usuarioEncontrado.ci }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header bg-success text-white">Nueva Suscripción</div>
-        <div class="card-body">
+      <div class="card border-0 shadow-lg">
+        <div class="card-header bg-success text-white py-3">
+          <h6 class="mb-0 fw-bold"><i class="fa fa-file-contract me-2"></i>NUEVO CONTRATO</h6>
+        </div>
+        <div class="card-body p-4">
           <form [formGroup]="renovarForm" (ngSubmit)="procesarRenovacion()">
             
             <div class="mb-3">
-              <label class="form-label">Plan</label>
-              <select class="form-select" formControlName="tipo">
-                <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
-              </select>
+              <label class="form-label text-muted fw-bold small">TIPO DE PLAN</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fa fa-list-alt text-muted"></i></span>
+                <select class="form-select fw-bold text-primary" formControlName="tipo">
+                  <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+                </select>
+              </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Fecha Inicio</label>
-              <input type="date" class="form-control" formControlName="fechaInicio">
+            <div class="row g-2 mb-4">
+              <div class="col-6">
+                <label class="form-label text-muted fw-bold small">INICIO</label>
+                <input 
+                  type="date" 
+                  class="form-control text-center" 
+                  formControlName="fechaInicio"
+                  [min]="minFechaInicio">
+              </div>
+              <div class="col-6">
+                <label class="form-label text-muted fw-bold small">FIN (AUTO)</label>
+                <input type="date" class="form-control text-center bg-light fw-bold" formControlName="fechaFin" readonly>
+              </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Fecha Fin (Calculada)</label>
-              <input type="date" class="form-control" formControlName="fechaFin" readonly>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success py-2 shadow-sm fw-bold" 
+                [disabled]="renovarForm.invalid">
+                <i class="fa fa-check-circle me-2"></i> CONFIRMAR RENOVACIÓN
+              </button>
             </div>
-
-            <button type="submit" class="btn btn-success w-100" [disabled]="renovarForm.invalid">
-              Confirmar Renovación
-            </button>
           </form>
         </div>
       </div>
     </div>
 
-    <div class="col-md-7">
-      <div class="card">
-        <div class="card-header">Historial de Suscripciones</div>
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h6 class="mb-0 fw-bold text-primary"><i class="fa fa-history me-2"></i>HISTORIAL DE PAGOS</h6>
+        </div>
         <div class="card-body p-0">
-          <table class="table table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Inicio</th>
-                <th>Fin</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let sub of historialSuscripciones">
-                <td>{{ sub.tipo }}</td>
-                <td>{{ sub.fechaInicio | date:'dd/MM/yyyy' }}</td>
-                <td>{{ sub.fechaFin | date:'dd/MM/yyyy' }}</td>
-                <td>
-                  <span class="badge" 
-                    [ngClass]="sub.activa ? 'bg-success' : 'bg-secondary'">
-                    {{ sub.activa ? 'ACTIVA' : 'INACTIVA' }}
-                  </span>
-                </td>
-              </tr>
-              <tr *ngIf="historialSuscripciones.length === 0">
-                <td colspan="4" class="text-center py-3">No hay historial disponible</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light text-secondary text-uppercase text-xs fw-bold">
+                <tr>
+                  <th class="ps-4">Plan</th>
+                  <th class="text-center">Inicio</th>
+                  <th class="text-center">Vencimiento</th>
+                  <th class="text-end pe-4">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let sub of historialSuscripciones">
+                  <td class="ps-4">
+                    <span class="fw-bold text-dark">{{ sub.tipo }}</span>
+                  </td>
+                  <td class="text-center text-muted small">
+                    {{ sub.fechaInicio | date:'dd/MM/yyyy' }}
+                  </td>
+                  <td class="text-center text-dark fw-bold small">
+                    {{ sub.fechaFin | date:'dd/MM/yyyy' }}
+                  </td>
+                  <td class="text-end pe-4">
+                    <span class="badge rounded-pill" 
+                      [ngClass]="sub.activa ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                      {{ sub.activa ? 'VIGENTE' : 'VENCIDO' }}
+                    </span>
+                  </td>
+                </tr>
+                
+                <tr *ngIf="historialSuscripciones.length === 0">
+                  <td colspan="4" class="text-center py-5 text-muted">
+                    <i class="fa fa-folder-open fa-2x mb-3 text-light-gray"></i>
+                    <p class="mb-0">Este cliente no tiene historial previo.</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

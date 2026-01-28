@@ -1,80 +1,55 @@
-/* Contenedor del formulario */
-form {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Animación de entrada */
+.fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
 }
 
-/* Separación entre campos */
-form > div {
-  margin-bottom: 18px;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* Inputs y select */
-form input,
-form select {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  font-size: 15px;
-  color: #374151;
-  outline: none;
-  transition: all 0.2s ease;
-  background-color: #f9fafb;
+/* Tarjeta */
+.card {
+    border-radius: 15px;
+    overflow: hidden;
 }
 
-/* Placeholder */
-form input::placeholder {
-  color: #9ca3af;
+.header-gradient {
+    background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%);
+    border-bottom: 0;
 }
 
-/* Focus */
-form input:focus,
-form select:focus {
-  border-color: #10b981;
-  background-color: #ffffff;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+/* Inputs */
+.input-group-text {
+    border-color: #ced4da;
+    background-color: #f8f9fa;
+    min-width: 45px;
+    justify-content: center;
 }
 
-/* Select */
-form select {
-  cursor: pointer;
+.form-control, .form-select {
+    padding: 0.6rem 1rem;
+    border-color: #ced4da;
+    font-size: 0.95rem;
 }
 
-/* Botón */
-form button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 10px;
-  background-color: #10b981;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #86b7fe;
 }
 
-/* Hover botón */
-form button:hover {
-  background-color: #059669;
+/* Validaciones */
+.ng-invalid.ng-touched:not(form) {
+    border-color: #dc3545;
 }
 
-/* Botón deshabilitado */
-form button:disabled {
-  background-color: #9ca3af;
-  cursor: not-allowed;
+/* Botón principal */
+.btn-primary {
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-size: 1.05rem;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  form {
-    padding: 20px;
-  }
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
 }
