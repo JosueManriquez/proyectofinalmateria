@@ -1,11 +1,11 @@
-import { Component, Injector, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core'; // 1. Importar OnDestroy
+import { Component, Injector, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SuscripcionService } from '../../../services/suscripcion';
 import { UsuarioService } from '../../../services/usuario';
 import { SuscripcionModelo } from '../../../models/suscripcion';
 import { UsuarioModelo } from '../../../models/usuario.model';
-import { firstValueFrom, Subscription } from 'rxjs'; // 2. Importar Subscription
+import { firstValueFrom, Subscription } from 'rxjs';
 import { Timestamp } from 'firebase/firestore';
 
 @Component({
@@ -15,21 +15,17 @@ import { Timestamp } from 'firebase/firestore';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule]
 })
-export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar OnDestroy
+export class RenovarSuscripcion implements OnInit, OnDestroy {
 
-  // Formularios
   searchForm!: FormGroup;
   renovarForm!: FormGroup;
 
-  // Datos
   usuarioEncontrado: UsuarioModelo | null = null;
   historialSuscripciones: SuscripcionModelo[] = [];
   ultimaSuscripcion: SuscripcionModelo | null = null;
   minFechaInicio: string = '';
-  // Control de suscripciones (Para evitar memoria llena o errores)
   private subHistorial: Subscription | null = null;
 
-  // Opciones
   tipos = ['MENSUAL', 'TRIMESTRAL', 'ANUAL'];
   mensajeError: string = '';
 
@@ -37,7 +33,6 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
     private fb: FormBuilder,
     private suscripcionService: SuscripcionService,
     private usuarioService: UsuarioService,
-    private injector: Injector,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -52,28 +47,22 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
       fechaFin: ['', Validators.required]
     });
 
-    // Recálculo automático de fechas
     this.renovarForm.get('tipo')?.valueChanges.subscribe(() => this.calcularFechaFin());
     this.renovarForm.get('fechaInicio')?.valueChanges.subscribe(() => this.calcularFechaFin());
   }
 
-  // 4. Limpiar suscripciones al salir de la pantalla
   ngOnDestroy(): void {
     if (this.subHistorial) {
       this.subHistorial.unsubscribe();
     }
   }
 
-  // --- LÓGICA DE BÚSQUEDA ---
-
   async buscarUsuario() {
-    // 1. Limpiar estado anterior
     this.mensajeError = '';
     this.usuarioEncontrado = null;
     this.historialSuscripciones = [];
     this.ultimaSuscripcion = null;
 
-    // Si había una búsqueda anterior escuchando cambios, la cancelamos
     if (this.subHistorial) {
       this.subHistorial.unsubscribe();
     }
@@ -82,23 +71,18 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
     if (!ci) return;
 
     try {
-      // 2. Buscar Usuario (Async/Await)
       const usuario = await firstValueFrom(this.usuarioService.obtenerUsuarioPorCI(ci));
 
       if (!usuario) {
         this.mensajeError = 'Usuario no encontrado con ese CI.';
-        this.cdr.detectChanges(); // Forzar actualización visual del error
+        this.cdr.detectChanges();
         return;
       }
 
-      // Mostrar usuario encontrado inmediatamente
       this.usuarioEncontrado = usuario;
-      this.cdr.detectChanges(); // IMPORTANTE: Pintar los datos del usuario YA
+      this.cdr.detectChanges();
 
-      // 3. Cargar Historial (Observable)
-      // Guardamos la suscripción en 'subHistorial'
       this.subHistorial = this.suscripcionService.obtenerHistorialPorCI(ci).subscribe(data => {
-
         this.historialSuscripciones = data.map(s => ({
           ...s,
           fechaInicio: s.fechaInicio instanceof Timestamp ? s.fechaInicio.toDate() : s.fechaInicio,
@@ -111,8 +95,6 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
         } else {
           this.prepararFormularioRenovacion(true);
         }
-
-        // IMPORTANTE: Forzar actualización cada vez que lleguen datos del historial
         this.cdr.detectChanges();
       });
 
@@ -123,48 +105,29 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
     }
   }
 
-  // --- LÓGICA DE FECHAS ---
-
   prepararFormularioRenovacion(esNuevo: boolean = false) {
     const hoy = new Date();
-    let fechaSugerida = hoy; // Por defecto hoy
+    let fechaSugerida = hoy;
 
-    // Si tiene historial, calculamos la continuidad
     if (!esNuevo && this.ultimaSuscripcion) {
-
-      // Obtenemos cuándo termina su plan actual
       const finAnterior = this.ultimaSuscripcion.fechaFin instanceof Timestamp
         ? this.ultimaSuscripcion.fechaFin.toDate()
         : new Date(this.ultimaSuscripcion.fechaFin);
 
-      // Calculamos el día siguiente (Fin + 1 día)
       const diaSiguiente = new Date(finAnterior);
       diaSiguiente.setDate(diaSiguiente.getDate() + 1);
 
-      // REGLA:
-      // 1. Si "Fin + 1" es futuro (sigue activo), sugerimos esa fecha para continuidad.
-      // 2. Si "Fin + 1" ya pasó (venció hace tiempo), sugerimos HOY.
-      if (diaSiguiente > hoy) {
-        fechaSugerida = diaSiguiente;
-      } else {
-        fechaSugerida = hoy;
-      }
-
-      // Establecemos el MÍNIMO permitido para que no elija una fecha que se superpone
-      // (El mínimo será el día siguiente al vencimiento anterior, o hoy si ya venció)
+      fechaSugerida = diaSiguiente > hoy ? diaSiguiente : hoy;
       this.minFechaInicio = this.formatDateString(fechaSugerida);
     } else {
-      // Si es nuevo, el mínimo es hoy
       this.minFechaInicio = this.formatDateString(hoy);
     }
 
-    // Aplicamos los valores al formulario
     this.renovarForm.patchValue({
       tipo: 'MENSUAL',
       fechaInicio: this.formatDateString(fechaSugerida)
     });
 
-    // Recalcular fecha fin automáticamente
     this.calcularFechaFin();
   }
 
@@ -177,13 +140,9 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
     const inicio = this.parseFechaLocal(inicioStr);
     const fin = new Date(inicio);
 
-    if (tipo === 'MENSUAL') {
-      fin.setMonth(fin.getMonth() + 1);
-    } else if (tipo === 'TRIMESTRAL') {
-      fin.setMonth(fin.getMonth() + 3);
-    } else if (tipo === 'ANUAL') {
-      fin.setFullYear(fin.getFullYear() + 1);
-    }
+    if (tipo === 'MENSUAL') fin.setMonth(fin.getMonth() + 1);
+    else if (tipo === 'TRIMESTRAL') fin.setMonth(fin.getMonth() + 3);
+    else if (tipo === 'ANUAL') fin.setFullYear(fin.getFullYear() + 1);
 
     fin.setDate(fin.getDate() - 1);
 
@@ -192,8 +151,7 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
     }, { emitEvent: false });
   }
 
-  // --- ACCIÓN PRINCIPAL ---
-
+  // --- ACCIÓN PRINCIPAL CORREGIDA ---
   async procesarRenovacion() {
     if (this.renovarForm.invalid || !this.usuarioEncontrado) return;
 
@@ -210,9 +168,10 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
           finDate
         );
       } else {
+        // CORRECCIÓN: Usar operador OR (||) para evitar 'undefined' en Firestore
         const nueva: SuscripcionModelo = {
-          UsuarioModeloCi: this.usuarioEncontrado.ci,
-          UsuarioModeloApellido: this.usuarioEncontrado.apellido,
+          UsuarioModeloCi: this.usuarioEncontrado.ci || '',
+          UsuarioModeloApellido: this.usuarioEncontrado.apellido || '', // Evita el error de la imagen
           tipo,
           fechaInicio: inicioDate,
           fechaFin: finDate,
@@ -221,24 +180,23 @@ export class RenovarSuscripcion implements OnInit, OnDestroy { // 3. Implementar
         await this.suscripcionService.crearSuscripcion(nueva);
       }
 
-      alert('Suscripción renovada con éxito');
-
-      // Resetear todo
-      this.renovarForm.reset();
-      this.usuarioEncontrado = null;
-      this.searchForm.reset();
-      this.historialSuscripciones = [];
-      if (this.subHistorial) this.subHistorial.unsubscribe(); // Dejar de escuchar cambios
-
-      this.cdr.detectChanges(); // Actualizar vista final
+      alert('Suscripción procesada con éxito');
+      this.limpiarPantalla();
 
     } catch (error) {
       console.error(error);
-      alert('Error al renovar la suscripción');
+      alert('Error al procesar la suscripción. Revisa la consola.');
     }
   }
 
-  // --- UTILIDADES DE FECHA ---
+  private limpiarPantalla() {
+    this.renovarForm.reset();
+    this.usuarioEncontrado = null;
+    this.searchForm.reset();
+    this.historialSuscripciones = [];
+    if (this.subHistorial) this.subHistorial.unsubscribe();
+    this.cdr.detectChanges();
+  }
 
   private parseFechaLocal(fecha: string): Date {
     const [year, month, day] = fecha.split('-').map(Number);
