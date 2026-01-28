@@ -133,5 +133,6 @@ export class UsuarioService {
         .doc(uid)
         .update(datosEditables);
     });
+    
   }
 }

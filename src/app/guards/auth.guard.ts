@@ -9,7 +9,7 @@ export const authGuard = () => {
 
   return afAuth.authState.pipe(
     take(1), // Toma solo el primer valor y cierra la suscripción
-    map(user => !!user), // Convierte el objeto user a true o false
+    map(user => !!user), // Convierte el objeto user a true o false asd
     tap(isLoggedIn => {
       if (!isLoggedIn) {
         console.log('⛔ Acceso denegado: Debes iniciar sesión');

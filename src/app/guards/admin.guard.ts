@@ -14,7 +14,7 @@ export const adminGuard = () => {
     take(1),
     switchMap(user => {
       if (!user) {
-        return of(false); // No hay usuario, rechazado
+        return of(false); // No hay usuario, rechazado  asdsa
       }
       // Si hay usuario, buscamos su rol en Firestore
       return usuarioService.obtenerUsuario(user.uid).pipe(
