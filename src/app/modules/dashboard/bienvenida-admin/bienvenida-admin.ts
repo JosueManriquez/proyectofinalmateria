@@ -13,11 +13,13 @@ export class BienvenidaAdmin {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   cerrarSesion() {
     this.authService.logout().then(() => {
-      this.router.navigate(['/login']);
+      // TRUCO: En lugar de usar el router de Angular, forzamos una recarga del navegador.
+      // Esto limpia la memoria RAM, variables y cualquier estado "pegado".
+      window.location.href = '/login';
     });
   }
 }

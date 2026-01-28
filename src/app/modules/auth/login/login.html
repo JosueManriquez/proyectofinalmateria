@@ -1,52 +1,79 @@
-<div class="admin-layout">
+<div class="login-wrapper fade-in">
+  
+  <div class="login-card shadow-lg">
+    
+    <div class="text-center mb-4">
+      <div class="logo-circle bg-gradient-primary shadow mb-3">
+        <i class="fas fa-dumbbell text-white fa-2x"></i>
+      </div>
+      <h3 class="fw-bold text-dark">GymSystem</h3>
+      <p class="text-muted small">Ingresa tus credenciales para continuar</p>
+    </div>
 
+    <form (ngSubmit)="login()">
+      
+      <div class="form-group mb-3">
+        <label for="email" class="form-label fw-bold small text-secondary">CORREO ELECTRÓNICO</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0 text-muted">
+            <i class="fas fa-envelope"></i>
+          </span>
+          <input
+            type="email"
+            class="form-control bg-light border-start-0 ps-0"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="ejemplo@correo.com"
+            required
+            [disabled]="cargando"
+          />
+        </div>
+      </div>
 
+      <div class="form-group mb-4">
+        <label for="password" class="form-label fw-bold small text-secondary">CONTRASEÑA</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0 text-muted">
+            <i class="fas fa-lock"></i>
+          </span>
+          <input
+            type="password"
+            class="form-control bg-light border-start-0 ps-0"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="••••••••"
+            required
+            [disabled]="cargando"
+          />
+        </div>
+      </div>
 
-  <!-- MAIN -->
-  <div class="main">
+      <div *ngIf="mensajeError" class="alert alert-danger py-2 small text-center mb-3 fade-in">
+        <i class="fas fa-exclamation-circle me-1"></i> {{ mensajeError }}
+      </div>
 
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <span>Acceso al sistema</span>
-    </header>
-
-    <!-- CONTENT -->
-    <section class="content">
-
-      <div class="login-container">
-        <h2>Inicio de sesión</h2>
-
-        <form (ngSubmit)="login()">
-          <div class="form-group">
-            <label for="email">Correo</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              [(ngModel)]="email"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="password">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              [(ngModel)]="password"
-              required
-            />
-          </div>
-
-          <button type="submit">Ingresar</button>
-        </form>
-
-        <button type="button" (click)="nuevoRegistro()">
-          Registrarse
+      <div class="d-grid mb-4">
+        <button type="submit" class="btn btn-primary btn-lg shadow fw-bold transition-btn" [disabled]="cargando">
+          <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
+          {{ cargando ? 'Iniciando sesión...' : 'INGRESAR' }}
         </button>
       </div>
 
-    </section>
+    </form>
+
+    <div class="text-center border-top pt-3">
+      <p class="small text-muted mb-1">¿No tienes una cuenta?</p>
+      <button type="button" class="btn btn-link text-primary fw-bold text-decoration-none p-0" (click)="nuevoRegistro()">
+        Regístrate aquí
+      </button>
+    </div>
+
   </div>
+
+  <div class="copyright text-white-50 mt-4 small">
+    &copy; 2026 GymSystem By Josue Manriquez
+  </div>
+
 </div>
