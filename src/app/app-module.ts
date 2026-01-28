@@ -36,7 +36,7 @@ registerLocaleData(localeEs);
     { provide: LOCALE_ID, useValue: 'es' },
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    /* provideClientHydration(withEventReplay()) */
+    /* provideClientHydration(withEventReplay())   */
   ],
   bootstrap: [App]
 })

@@ -79,7 +79,7 @@ const routes: Routes = [
   { 
     path: 'ingreso', 
     component: Ingreso,
-    canActivate: [adminGuard] // 🔒 Protegido para que solo el personal acceda a la terminal
+    canActivate: [adminGuard] // 🔒 Protegido para que solo el personal acceda a la terminal adsa
   }
 ];
 
