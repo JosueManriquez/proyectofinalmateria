@@ -1,58 +1,86 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
+// Componentes de Autenticación
 import { Registrar } from './modules/auth/registrar/registrar';
 import { Login } from './modules/auth/login/login';
+
+// Componentes del Dashboard Admin
 import { BienvenidaAdmin } from './modules/dashboard/bienvenida-admin/bienvenida-admin';
-import { BienvenidaUsuario } from './modules/dashboard/bienvenida-usuario/bienvenida-usuario';
+import { DashboardHome } from './modules/dashboard/dashboard-home/dashboard-home'; 
 import { CambiarRol } from './modules/dashboard/bienvenida-admin/cambiar-rol/cambiar-rol';
 import { DesactivarUsuario } from './modules/dashboard/bienvenida-admin/desactivar-usuario/desactivar-usuario';
 import { GestionarCategoria } from './modules/dashboard/gestionar-categoria/gestionar-categoria';
 import { AgregarProducto } from './modules/dashboard/agregar-producto/agregar-producto';
 import { GestionarProducto } from './modules/dashboard/gestionar-producto/gestionar-producto';
-import { Ingreso } from './modules/gym/ingreso/ingreso';
+
+// Componentes de Gestión de Usuarios (Admin)
 import { CrearUsuario } from './modules/dashboard/bienvenida-admin/usuarios/crear-usuario/crear-usuario';
 import { ListarUsuarios } from './modules/dashboard/bienvenida-admin/usuarios/listar-usuarios/listar-usuarios';
 import { EditarUsuario } from './modules/dashboard/bienvenida-admin/usuarios/editar-usuario/editar-usuario';
+
+// Componentes de Suscripción (Admin)
 import { RenovarSuscripcion } from './modules/suscripcion/renovar-suscripcion/renovar-suscripcion';
 import { Historial } from './modules/suscripcion/historial/historial';
 import { CrearSuscripcion } from './modules/suscripcion/crear-suscripcion/crear-suscripcion';
 
-// 1. NUEVO IMPORT
-import { DashboardHome } from './modules/dashboard/dashboard-home/dashboard-home'; 
+// Componentes de Usuario/Cliente y Gym
+import { BienvenidaUsuario } from './modules/dashboard/bienvenida-usuario/bienvenida-usuario';
+import { Ingreso } from './modules/gym/ingreso/ingreso';
+
+// --- IMPORTACIÓN DE GUARDS ---
+import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
+  // Rutas Públicas
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'registrar', component: Registrar },
   { path: 'login', component: Login },
+
+  // RUTAS DE ADMINISTRADOR (Protegidas con adminGuard)
   {
     path: 'admin',
     component: BienvenidaAdmin,
+    canActivate: [adminGuard], // 🔒 Bloquea todo el acceso si no es admin
     children: [
-      
-      // 2. NUEVA RUTA PRINCIPAL (Dashboard Home)
-      // Esta es la clave: cuando entres a /admin, cargará esto primero.
+      // Home del Dashboard
       { path: '', component: DashboardHome }, 
 
+      // Herramientas
       { path: 'cambiar-rol', component: CambiarRol },
       { path: 'desactivar-usuario', component: DesactivarUsuario },
+      
+      // Productos y Categorías
       { path: 'gestionar-categoria', component: GestionarCategoria },
       { path: 'agregar-producto', component: AgregarProducto },
       { path: 'gestionar-producto', component: GestionarProducto },
       
-      // Usuarios
+      // Gestión de Usuarios
       { path: 'usuarios', component: ListarUsuarios },
       { path: 'usuarios/crear', component: CrearUsuario },
       { path: 'usuarios/editar/:id', component: EditarUsuario },
 
-      // Suscripcion
+      // Gestión de Suscripciones
       { path: 'suscripcion/crear-suscripcion', component: CrearSuscripcion },
       { path: 'suscripcion/renovar-suscripcion', component: RenovarSuscripcion },
       { path: 'suscripcion/historial', component: Historial }
     ]
   },
 
-  { path: 'usuario', component: BienvenidaUsuario },
-  { path: 'ingreso', component: Ingreso }
+  // RUTAS DE CLIENTE (Protegidas con authGuard)
+  { 
+    path: 'usuario', 
+    component: BienvenidaUsuario,
+    canActivate: [authGuard] // 🔒 Solo usuarios logueados
+  },
+
+  // RUTA DE INGRESO (Recepción)
+  { 
+    path: 'ingreso', 
+    component: Ingreso,
+    canActivate: [adminGuard] // 🔒 Protegido para que solo el personal acceda a la terminal
+  }
 ];
 
 @NgModule({
