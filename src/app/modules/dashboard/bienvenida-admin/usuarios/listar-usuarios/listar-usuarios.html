@@ -1,35 +1,125 @@
-<h2>Usuarios</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>CI</th>
-      <th>Email</th>
-      <th>Rol</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let u of usuarios">
-      <td>{{ u.nombre }}</td>
-      <td>{{ u.apellido }}</td>
-      <td>{{ u.ci }}</td>
-      <td>{{ u.email }}</td>
-      <td>
-        <select *ngIf="u.uid" [(ngModel)]="rolSeleccionado[u.uid]">
+<div class="container mt-4 fade-in">
 
-          <option value="admin">Admin</option>
-          <option value="usuario">Usuario</option>
-          <option value="cliente">Cliente</option>
-        </select>
-      </td>
-      <td>
-        <button *ngIf="u.uid" (click)="cambiarRol(u.uid)">Guardar</button>
-        <button *ngIf="u.uid" (click)="editarUsuario(u.uid)">Editar</button>
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <h2 class="fw-bold text-primary mb-0"><i class="fa fa-users me-2"></i>Gestión de Usuarios</h2>
+      <p class="text-muted mb-0">Administra el acceso y roles de los miembros</p>
+    </div>
+    <a routerLink="/admin/usuarios/crear" class="btn btn-primary shadow-sm btn-lg">
+      <i class="fa fa-user-plus me-2"></i> Nuevo Usuario
+    </a>
+  </div>
 
-      </td>
-    </tr>
-  </tbody>
-</table>
-<a routerLink="/admin/usuarios/crear">Agregar Usuario</a>
+  <div class="card shadow-lg border-0 rounded-lg overflow-hidden">
+
+    <div class="card-header bg-white py-3 border-bottom-0">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted">
+              <i class="fa fa-search"></i>
+            </span>
+            <input type="text" class="form-control bg-light border-start-0 ps-0" placeholder="Buscar..."
+              [(ngModel)]="textoBusqueda" (input)="filtrar()">
+          </div>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+          <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+            Total: <strong>{{ usuariosFiltrados.length }}</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light text-uppercase text-secondary text-xs font-weight-bolder">
+            <tr>
+              <th class="ps-4">Usuario</th>
+              <th>CI</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th class="text-end pe-4">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr *ngIf="cargando">
+              <td colspan="6" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted small">Cargando...</p>
+              </td>
+            </tr>
+
+            <tr *ngFor="let u of usuariosFiltrados" class="transition-row">
+
+              <td class="ps-4">
+                <div class="d-flex align-items-center">
+                  <div class="avatar-circle me-3 bg-gradient-primary text-white shadow-sm">
+                    {{ u.nombre.charAt(0) | uppercase }}
+                  </div>
+                  <div class="d-flex flex-column">
+                    <span class="fw-bold text-dark">{{ u.nombre }} {{ u.apellido }}</span>
+                    <small class="text-muted text-xs" *ngIf="u.fechaRegistro">
+                      Registro: {{ u.fechaRegistro | date:'d MMMM y' }}
+                    </small>
+
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <span class="fw-bold text-dark"><i class="fa fa-id-card text-secondary me-1"></i> {{ u.ci }}</span>
+              </td>
+
+              <td>
+                <span class="text-muted text-sm">{{ u.email }}</span>
+              </td>
+
+              <td>
+                <div *ngIf="u.uid" class="d-flex align-items-center gap-2">
+                  <select class="form-select form-select-sm border bg-light fw-bold text-primary shadow-sm"
+                    [(ngModel)]="rolSeleccionado[u.uid]" style="width: 110px;">
+                    <option value="admin">Admin</option>
+                    <option value="usuario">Usuario</option>
+                    <option value="cliente">Cliente</option>
+                  </select>
+
+                  <button class="btn btn-success btn-sm px-2 shadow-sm" (click)="cambiarRol(u.uid)" title="Guardar Rol">
+                    <i class="fa fa-save"></i>
+                  </button>
+                </div>
+              </td>
+
+              <td>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" [checked]="u.activo" (change)="toggleEstado(u)"
+                    style="cursor: pointer;">
+                  <label class="form-check-label text-xs fw-bold" [ngClass]="u.activo ? 'text-success' : 'text-danger'">
+                    {{ u.activo ? 'Activo' : 'Inactivo' }}
+                  </label>
+                </div>
+              </td>
+
+              <td class="text-end pe-4">
+                <button *ngIf="u.uid" class="btn btn-outline-primary btn-sm px-3" (click)="editarUsuario(u.uid)">
+                  <i class="fa fa-pen me-1"></i> Editar
+                </button>
+              </td>
+
+            </tr>
+
+            <tr *ngIf="!cargando && usuariosFiltrados.length === 0">
+              <td colspan="6" class="text-center py-5 text-muted">
+                No se encontraron usuarios.
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

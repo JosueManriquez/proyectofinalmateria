@@ -1,190 +1,130 @@
-/* import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
 import { SuscripcionService } from '../../../services/suscripcion';
 import { UsuarioService } from '../../../services/usuario';
-
+import { UsuarioModelo } from '../../../models/usuario.model';
 import { firstValueFrom } from 'rxjs';
-import { runInInjectionContext } from '@angular/core';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-crear-suscripcion',
   templateUrl: './crear-suscripcion.html',
-  styleUrls: ['./crear-suscripcion.css'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule
-  ]
+  styleUrls: ['./crear-suscripcion.css'], // <--- TIENE QUE COINCIDIR EL NOMBRE  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule]
 })
 export class CrearSuscripcion implements OnInit {
 
   suscripcionForm!: FormGroup;
   tipos = ['MENSUAL', 'TRIMESTRAL', 'ANUAL'];
+  suscripciones: any[] = [];
+
+  // Para mostrar info del usuario antes de guardar
+  usuarioEncontrado: UsuarioModelo | null = null;
+  mensajeUsuario: string = '';
 
   constructor(
     private fb: FormBuilder,
     private suscripcionService: SuscripcionService,
     private usuarioService: UsuarioService,
-    private injector: Injector // ✅ Injector para runInInjectionContext
-  ) {}
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
+    // Inicializamos con fecha de hoy por defecto
+    const hoy = this.formatDateString(new Date());
+
     this.suscripcionForm = this.fb.group({
       ci: ['', Validators.required],
       tipo: ['MENSUAL', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFin: ['', Validators.required]
+      fechaInicio: [hoy, Validators.required],
+      fechaFin: ['', Validators.required] // Será readonly
     });
+
+    this.cargarSuscripciones();
+    this.calcularFechaFin(); // Calcular inicial
+
+    // Detectar cambios para recalcular fecha fin automáticamente
+    this.suscripcionForm.get('tipo')?.valueChanges.subscribe(() => this.calcularFechaFin());
+    this.suscripcionForm.get('fechaInicio')?.valueChanges.subscribe(() => this.calcularFechaFin());
   }
 
-  async guardarSuscripcion() {
-    console.log('guardarSuscripcion llamado'); // debug rápido
+  // --- LÓGICA DE NEGOCIO ---
 
-    if (this.suscripcionForm.invalid) {
-      alert('Completa todos los campos');
-      return;
-    }
+  // Buscar usuario al perder el foco del input CI o presionar Enter
+  async verificarUsuario() {
+    const ci = this.suscripcionForm.get('ci')?.value;
+    if (!ci) return;
 
-    const { ci, tipo, fechaInicio, fechaFin } = this.suscripcionForm.value;
-
-    // 🔎 Obtener usuario por CI
-    const usuario = await firstValueFrom(
-      this.usuarioService.obtenerUsuarioPorCI(ci)
-    );
-
-    if (!usuario) {
-      alert('El CI no existe en la base de datos');
-      return;
-    }
-
-    const nuevaSuscripcion = {
-      UsuarioModeloCi: usuario.ci,
-      UsuarioModeloApellido: usuario.apellido,
-      tipo,
-      fechaInicio: new Date(fechaInicio),
-      fechaFin: new Date(fechaFin),
-      activa: true
-    };
+    this.mensajeUsuario = 'Buscando...';
+    this.usuarioEncontrado = null;
 
     try {
-      // ⚡ Ejecutar la creación dentro de un contexto de inyección
-      await runInInjectionContext(this.injector, async () => {
-        await this.suscripcionService.crearSuscripcion(nuevaSuscripcion);
-      });
-
-      alert('Suscripción creada con éxito');
-      this.suscripcionForm.reset({ tipo: 'MENSUAL' });
-
+      const usuario = await firstValueFrom(this.usuarioService.obtenerUsuarioPorCI(ci));
+      if (usuario) {
+        this.usuarioEncontrado = usuario;
+        this.mensajeUsuario = `✅ Usuario: ${usuario.nombre} ${usuario.apellido}`;
+      } else {
+        this.mensajeUsuario = '❌ Usuario no encontrado. Regístralo primero.';
+      }
     } catch (error) {
-      console.error('Error creando suscripción:', error);
-      alert('Ocurrió un error al crear la suscripción');
+      this.mensajeUsuario = 'Error al buscar usuario.';
     }
-  }
-} */
-
-import { Component, OnInit, Injector, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-
-import { SuscripcionService } from '../../../services/suscripcion';
-import { UsuarioService } from '../../../services/usuario';
-
-import { firstValueFrom } from 'rxjs';
-import { runInInjectionContext } from '@angular/core';
-import { Timestamp } from 'firebase/firestore'; // 🔹 Importa Timestamp
-
-@Component({
-  selector: 'app-crear-suscripcion',
-  templateUrl: './crear-suscripcion.html',
-  styleUrls: ['./crear-suscripcion.css'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule
-  ]
-})
-export class CrearSuscripcion implements OnInit {
-
-  suscripcionForm!: FormGroup;
-  tipos = ['MENSUAL', 'TRIMESTRAL', 'ANUAL'];
-
-  suscripciones: any[] = []; // 🔹 Lista de suscripciones para la tabla
-
-  constructor(
-    private fb: FormBuilder,
-    private suscripcionService: SuscripcionService,
-    private usuarioService: UsuarioService,
-    private injector: Injector,
-    private cdr: ChangeDetectorRef,
-    
-  ) {}
-  //fecha actual y local
-    private parseFechaLocal(fecha: string): Date {
-    const [year, month, day] = fecha.split('-').map(Number);
-    return new Date(year, month - 1, day);
+    this.cdr.detectChanges();
   }
 
-  private formatDateString(fecha: any): string {
-    // Convierte cualquier fecha tipo Date en "YYYY-MM-DD" para parseFechaLocal
-    const d = new Date(fecha);
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    return `${d.getFullYear()}-${month}-${day}`;
-} 
+  calcularFechaFin() {
+    const tipo = this.suscripcionForm.get('tipo')?.value;
+    const inicioStr = this.suscripcionForm.get('fechaInicio')?.value;
 
-  ngOnInit(): void {
-    this.suscripcionForm = this.fb.group({
-      ci: ['', Validators.required],
-      tipo: ['MENSUAL', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFin: ['', Validators.required]
-    });
+    if (!inicioStr || !tipo) return;
 
-    // 🔹 Cargar suscripciones usando runInInjectionContext
-    runInInjectionContext(this.injector, () => {
-      this.cargarSuscripciones();
-    });
+    const inicio = this.parseFechaLocal(inicioStr);
+    const fin = new Date(inicio);
+
+    if (tipo === 'MENSUAL') {
+      fin.setMonth(fin.getMonth() + 1);
+    } else if (tipo === 'TRIMESTRAL') {
+      fin.setMonth(fin.getMonth() + 3);
+    } else if (tipo === 'ANUAL') {
+      fin.setFullYear(fin.getFullYear() + 1);
+    }
+
+    // Restamos 1 día para exactitud
+    fin.setDate(fin.getDate() - 1);
+
+    this.suscripcionForm.patchValue({
+      fechaFin: this.formatDateString(fin)
+    }, { emitEvent: false });
   }
 
   async guardarSuscripcion() {
-
-    const { ci, tipo, fechaInicio, fechaFin } = this.suscripcionForm.value;
-
-    // 1️⃣ Validar campos vacíos
-    if (!ci || !tipo || !fechaInicio || !fechaFin) {
-      alert('Completa todos los campos');
+    if (this.suscripcionForm.invalid) {
+      this.suscripcionForm.markAllAsTouched();
       return;
     }
 
-    // 2️⃣ Convertir fechas correctamente (sin timezone)
+    // Validar que tengamos usuario verificado
+    if (!this.usuarioEncontrado) {
+      await this.verificarUsuario();
+      if (!this.usuarioEncontrado) {
+        alert('No se puede crear suscripción: Usuario no existe.');
+        return;
+      }
+    }
+
+    const { tipo, fechaInicio, fechaFin } = this.suscripcionForm.value;
     const inicio = this.parseFechaLocal(fechaInicio);
     const fin = this.parseFechaLocal(fechaFin);
 
-    // 3️⃣ Validar coherencia de fechas
-    // ❌ solo cuando FIN es ANTES que INICIO
     if (fin < inicio) {
-      alert('La fecha fin no puede ser anterior a la fecha inicio');
+      alert('Error en las fechas.');
       return;
     }
 
-    // 4️⃣ Validar CI (solo si fechas están bien)
-    const usuario = await firstValueFrom(
-      this.usuarioService.obtenerUsuarioPorCI(ci)
-    );
-
-    if (!usuario) {
-      alert('El CI no existe en la base de datos');
-      return;
-    }
-
-    // 5️⃣ Crear suscripción
     const nuevaSuscripcion = {
-      UsuarioModeloCi: usuario.ci,
-      UsuarioModeloApellido: usuario.apellido,
+      UsuarioModeloCi: this.usuarioEncontrado.ci,
+      UsuarioModeloApellido: this.usuarioEncontrado.apellido,
       tipo,
       fechaInicio: inicio,
       fechaFin: fin,
@@ -192,53 +132,58 @@ export class CrearSuscripcion implements OnInit {
     };
 
     try {
-      await runInInjectionContext(this.injector, async () => {
-        await this.suscripcionService.crearSuscripcion(nuevaSuscripcion);
-      });
+      // NOTA: Ya no necesitamos runInInjectionContext aquí porque está en el servicio
+      await this.suscripcionService.crearSuscripcion(nuevaSuscripcion);
 
       alert('Suscripción creada con éxito');
-      this.suscripcionForm.reset({ tipo: 'MENSUAL' });
-      this.cargarSuscripciones();
+      this.suscripcionForm.reset({
+        tipo: 'MENSUAL',
+        fechaInicio: this.formatDateString(new Date())
+      });
+      this.usuarioEncontrado = null;
+      this.mensajeUsuario = '';
+
+      // Recalcular fechas tras reset
+      setTimeout(() => this.calcularFechaFin(), 100);
 
     } catch (error) {
       console.error(error);
+      alert('Error al guardar');
     }
   }
-
 
   cargarSuscripciones() {
     this.suscripcionService.listarSuscripciones().subscribe(data => {
       this.suscripciones = data.map(s => ({
         ...s,
-        fechaInicio: s.fechaInicio instanceof Timestamp 
-                    ? s.fechaInicio.toDate() 
-                    : this.parseFechaLocal(this.formatDateString(s.fechaInicio)),
-        fechaFin: s.fechaFin instanceof Timestamp 
-                    ? s.fechaFin.toDate() 
-                    : this.parseFechaLocal(this.formatDateString(s.fechaFin))
+        fechaInicio: s.fechaInicio instanceof Timestamp ? s.fechaInicio.toDate() : s.fechaInicio,
+        fechaFin: s.fechaFin instanceof Timestamp ? s.fechaFin.toDate() : s.fechaFin
       }));
+      // Ordenar por fecha fin descendente
+      this.suscripciones.sort((a, b) => new Date(b.fechaFin).getTime() - new Date(a.fechaFin).getTime());
       this.cdr.detectChanges();
     });
   }
 
   async eliminarSuscripcion(id: string) {
-    // 1️⃣ Confirmación del usuario
-    const confirmacion = confirm('¿Estás seguro de eliminar esta suscripción?');
-    if (!confirmacion) return; // si cancela, no hacer nada
-
+    if (!confirm('¿Estás seguro de eliminar esta suscripción?')) return;
     try {
-      // 2️⃣ Ejecutar eliminación en contexto de inyección
-      await runInInjectionContext(this.injector, async () => {
-        await this.suscripcionService.eliminarSuscripcion(id);
-      });
-
-      // 3️⃣ Recargar automáticamente la tabla
-      this.cargarSuscripciones();
-
-      alert('Suscripción eliminada correctamente');
+      await this.suscripcionService.eliminarSuscripcion(id);
     } catch (error) {
-/*       console.error('Error eliminando suscripción:', error);
-      alert('Ocurrió un error al eliminar la suscripción'); */
+      console.error(error);
     }
+  }
+
+  // --- UTILS ---
+  private parseFechaLocal(fecha: string): Date {
+    const [year, month, day] = fecha.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  private formatDateString(fecha: any): string {
+    const d = new Date(fecha);
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${d.getFullYear()}-${month}-${day}`;
   }
 }

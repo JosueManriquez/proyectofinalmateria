@@ -8,3 +8,4 @@ export interface SuscripcionModelo {
   fechaFin: Date;
   activa: boolean;
 }
+  

@@ -5,13 +5,13 @@ import { map } from 'rxjs/operators';
 import { UsuarioModelo } from '../models/usuario.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
-
 export interface UsuarioCrear {
   nombre: string;
   apellido: string;
   ci: string;
   rol: 'admin' | 'usuario' | 'cliente';
 }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -23,6 +23,7 @@ export class UsuarioService {
     private afAuth: AngularFireAuth
   ) { }
 
+  // Crear un usuario base (sin auth)
   crearUsuario(uid: string, email: string) {
     return runInInjectionContext(this.injector, () => {
       return this.firestore
@@ -38,10 +39,10 @@ export class UsuarioService {
           telefono: '',
           fechaRegistro: new Date(),
         });
-
     });
   }
 
+  // Obtener un solo usuario por UID
   obtenerUsuario(uid: string) {
     return runInInjectionContext(this.injector, () => {
       return this.firestore
@@ -51,23 +52,37 @@ export class UsuarioService {
     });
   }
 
+  // Obtener lista completa de usuarios (CORREGIDO PARA TABLA)
   obtenerUsuarios(): Observable<UsuarioModelo[]> {
     return runInInjectionContext(this.injector, () => {
       return this.firestore
         .collection<UsuarioModelo>('usuarios')
-        .snapshotChanges()
+        .snapshotChanges() // Usamos snapshot para obtener el ID y metadata
         .pipe(
           map(actions =>
             actions.map(a => {
-              const data = a.payload.doc.data() as UsuarioModelo;
+              const data = a.payload.doc.data() as any;
               const uid = a.payload.doc.id;
-              return { ...data, uid };
+
+              // Conversión de Fecha: Firebase Timestamp -> JS Date
+              let fechaReal = data.fechaRegistro;
+              // Si es un Timestamp de Firebase (tiene seconds), lo convertimos
+              if (data.fechaRegistro && data.fechaRegistro.seconds) {
+                fechaReal = new Date(data.fechaRegistro.seconds * 1000);
+              }
+
+              return {
+                uid: uid, // Aseguramos que el UID vaya en el objeto
+                ...data,
+                fechaRegistro: fechaReal // Ponemos la fecha ya convertida
+              };
             })
           )
         );
     });
   }
 
+  // Cambiar rol (Admin/Usuario/Cliente)
   cambiarRol(uid: string, rol: string) {
     return runInInjectionContext(this.injector, () => {
       return this.firestore
@@ -76,14 +91,18 @@ export class UsuarioService {
         .update({ rol });
     });
   }
+
+  // Activar o desactivar usuario
   desactivarUsuario(uid: string, activo: boolean) {
     return runInInjectionContext(this.injector, () => {
       return this.firestore
         .collection('usuarios')
         .doc(uid)
-        .update({ activo }); //inge lo tiene en estado  
+        .update({ activo });
     });
   }
+
+  // Buscar usuario por CI (Para validaciones)
   obtenerUsuarioPorCI(ci: string): Observable<UsuarioModelo | null> {
     return runInInjectionContext(this.injector, () => {
       return this.firestore
@@ -94,6 +113,8 @@ export class UsuarioService {
         );
     });
   }
+
+  // Registrar usuario completo (Auth + Firestore)
   async registrarUsuario(
     email: string,
     password: string,
@@ -104,7 +125,7 @@ export class UsuarioService {
     const cred = await this.afAuth.createUserWithEmailAndPassword(email, password);
 
     if (!cred.user) {
-      throw new Error('No se pudo crear el usuario');
+      throw new Error('No se pudo crear el usuario en Auth');
     }
 
     const uid = cred.user.uid;
@@ -127,5 +148,12 @@ export class UsuarioService {
     });
   }
 
+  // Actualizar datos personales (Nombre, CI, etc.)
+  actualizarDatosUsuario(uid: string, datos: any): Promise<void> {
+    return runInInjectionContext(this.injector, () => {
+      // Filtramos para que NO se pueda tocar el rol desde aquí por seguridad
+      const { rol, ...datosEditables } = datos;
+      return this.firestore.collection('usuarios').doc(uid).update(datosEditables);
+    });
+  }
 }
-

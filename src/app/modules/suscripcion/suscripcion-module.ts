@@ -11,7 +11,7 @@ import { CrearSuscripcion } from './crear-suscripcion/crear-suscripcion';
 
 @NgModule({
   declarations: [
-    Historial,
+    // RenovarSuscripcion,
   ],
   imports: [
     CommonModule,
@@ -20,6 +20,7 @@ import { CrearSuscripcion } from './crear-suscripcion/crear-suscripcion';
     RouterModule,
     CrearSuscripcion,
     RenovarSuscripcion,
+    Historial
   ]
 })
 export class SuscripcionModule {}

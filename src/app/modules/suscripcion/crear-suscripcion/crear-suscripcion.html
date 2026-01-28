@@ -1,59 +1,102 @@
-<div class="form-container">
-  <form [formGroup]="suscripcionForm" (ngSubmit)="guardarSuscripcion()">
-    <div>
-      <label>CI:</label>
-      <input type="text" formControlName="ci">
+<div class="container mt-4">
+  <div class="row">
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Nueva Suscripción</h5>
+        </div>
+        <div class="card-body">
+
+          <form [formGroup]="suscripcionForm" (ngSubmit)="guardarSuscripcion()">
+
+            <div class="mb-3">
+              <label class="form-label">Cédula de Identidad</label>
+              <div class="input-group">
+                <input type="text" class="form-control" formControlName="ci" (blur)="verificarUsuario()"
+                  placeholder="Ingrese CI">
+                <button type="button" class="btn btn-outline-secondary" (click)="verificarUsuario()">
+                  🔍
+                </button>
+              </div>
+              <small class="d-block mt-1 fw-bold" [ngClass]="usuarioEncontrado ? 'text-success' : 'text-danger'">
+                {{ mensajeUsuario }}
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Tipo de Plan</label>
+              <select class="form-select" formControlName="tipo">
+                <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Fecha Inicio</label>
+              <input type="date" class="form-control" formControlName="fechaInicio">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Fecha Fin (Auto)</label>
+              <input type="date" class="form-control bg-light" formControlName="fechaFin" readonly>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100"
+              [disabled]="suscripcionForm.invalid || !usuarioEncontrado">
+              Crear Suscripción
+            </button>
+          </form>
+
+        </div>
+      </div>
     </div>
 
-    <div>
-      <label>Tipo de Suscripción:</label>
-      <select formControlName="tipo">
-        <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
-      </select>
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Registros Recientes</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>CI</th>
+                  <th>Apellido</th>
+                  <th>Tipo</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of suscripciones">
+                  <td>{{ s.UsuarioModeloCi }}</td>
+                  <td>{{ s.UsuarioModeloApellido }}</td>
+                  <td><span class="badge bg-info text-dark">{{ s.tipo }}</span></td>
+                  <td>{{ s.fechaInicio | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ s.fechaFin | date:'dd/MM/yyyy' }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="s.activa ? 'bg-success' : 'bg-danger'">
+                      {{ s.activa ? 'Activa' : 'Inactiva' }}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-danger" (click)="eliminarSuscripcion(s.id)">
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="suscripciones.length === 0">
+                  <td colspan="7" class="text-center py-3">No hay registros aún.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div>
-      <label>Fecha Inicio:</label>
-      <input type="date" formControlName="fechaInicio">
-    </div>
-
-    <div>
-      <label>Fecha Fin:</label>
-      <input type="date" formControlName="fechaFin">
-    </div>
-
-    <button type="submit">Guardar Suscripción</button>
-  </form>
-</div>
-
-<hr>
-
-<!-- Tabla de suscripciones -->
-<div class="table-container" *ngIf="suscripciones.length > 0">
-  <table border="1" cellpadding="5">
-    <thead>
-      <tr>
-        <th>CI</th>
-        <th>Apellido</th>
-        <th>Tipo</th>
-        <th>Inicio</th>
-        <th>Fin</th>
-        <th>Activa</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let s of suscripciones">
-        <td>{{ s.UsuarioModeloCi }}</td>
-        <td>{{ s.UsuarioModeloApellido }}</td>
-        <td>{{ s.tipo }}</td>
-        <td>{{ s.fechaInicio | date:'dd/MM/yyyy' }}</td>
-        <td>{{ s.fechaFin | date:'dd/MM/yyyy' }}</td>
-        <td>{{ s.activa ? 'Activa' : 'Inactiva' }}</td>
-        <td>
-          <button (click)="eliminarSuscripcion(s.id)">Eliminar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  </div>
 </div>

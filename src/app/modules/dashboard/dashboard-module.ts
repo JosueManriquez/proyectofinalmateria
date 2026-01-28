@@ -5,14 +5,13 @@ import { BienvenidaUsuario } from './bienvenida-usuario/bienvenida-usuario';
 import { CambiarRol } from './bienvenida-admin/cambiar-rol/cambiar-rol';
 import { DesactivarUsuario } from './bienvenida-admin/desactivar-usuario/desactivar-usuario';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GestionarCategoria } from './gestionar-categoria/gestionar-categoria';
 import { AgregarProducto } from './agregar-producto/agregar-producto';
 import { GestionarProducto } from './gestionar-producto/gestionar-producto';
 import { ListarUsuarios } from './bienvenida-admin/usuarios/listar-usuarios/listar-usuarios';
 import { CrearUsuario } from './bienvenida-admin/usuarios/crear-usuario/crear-usuario';
 import { EditarUsuario } from './bienvenida-admin/usuarios/editar-usuario/editar-usuario';
-
 
 @NgModule({
   declarations: [
@@ -30,8 +29,11 @@ import { EditarUsuario } from './bienvenida-admin/usuarios/editar-usuario/editar
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    RouterModule,
+    
 
   ]
 })

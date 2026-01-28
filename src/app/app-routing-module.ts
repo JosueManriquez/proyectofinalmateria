@@ -43,7 +43,10 @@ const routes: Routes = [
     },
     { path: 'usuarios', component: ListarUsuarios },
     { path: 'usuarios/crear', component: CrearUsuario },
-    { path: 'usuarios/editar/:uid', component: EditarUsuario },
+    {
+      path: 'usuarios/editar/:id',
+      component: EditarUsuario
+    },
 
       // suscricion
     { path: 'suscripcion/crear-suscripcion', component: CrearSuscripcion },

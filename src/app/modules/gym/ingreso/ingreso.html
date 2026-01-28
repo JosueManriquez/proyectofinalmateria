@@ -1,21 +1,51 @@
 <div class="ingreso-container">
-  <h2 class="title">Registro de Entrada al Gym</h2>
-  <p class="subtitle">Ingresa tu C.I. para validar tu suscripción y registrar asistencia</p>
+  
+  <div class="card-ingreso">
+    <h2 class="title">Control de Acceso</h2>
+    <p class="subtitle">Ingresa tu C.I. para registrar asistencia</p>
 
-  <div class="form-group">
-    <label for="ci">C.I.</label>
-    <input type="text" id="ci" [(ngModel)]="ci" placeholder="Ej: 12345678" />
-  </div>
+    <div class="input-group">
+      <input 
+        type="text" 
+        [(ngModel)]="ci" 
+        (keyup.enter)="registrarIngreso()" 
+        placeholder="Cédula de Identidad" 
+        class="input-ci"
+        autofocus
+      />
+      <button (click)="registrarIngreso()" class="btn-ingresar">
+        Marcar
+      </button>
+    </div>
 
-  <button (click)="registrarIngreso()">Registrar Entrada</button>
+    <div class="mensaje-box" *ngIf="mensaje" [ngClass]="{'error': esError, 'success': !esError}">
+      {{ mensaje }}
+    </div>
 
-  <div class="mensaje" *ngIf="mensaje">
-    {{ mensaje }}
-  </div>
+    <div class="usuario-info fade-in" *ngIf="usuarioEncontrado">
+      <div class="info-header">
+        <div class="avatar-circle">
+          {{ usuarioEncontrado.nombre.charAt(0) }}
+        </div>
+        <div>
+          <h3>{{ usuarioEncontrado.nombre }} {{ usuarioEncontrado.apellido }}</h3>
+          <span class="badge-rol">{{ usuarioEncontrado.rol | uppercase }}</span>
+        </div>
+      </div>
+      
+      <div class="info-details" *ngIf="!esError">
+        <div class="stat">
+          <span class="label">Días Restantes</span>
+          <span class="value" [ngClass]="diasRestantes < 5 ? 'text-danger' : 'text-success'">
+            {{ diasRestantes }}
+          </span>
+        </div>
+        <div class="stat">
+          <span class="label">Estado</span>
+          <span class="value text-success">HABILITADO</span>
+        </div>
+      </div>
+    </div>
 
-  <div class="usuario-info" *ngIf="usuarioEncontrado">
-    <h3>{{ usuarioEncontrado.nombre }} {{ usuarioEncontrado.apellido }}</h3>
-    <p>Rol: {{ usuarioEncontrado.rol }}</p>
-    <p>Días restantes de suscripción: {{ diasRestantes }}</p>
   </div>
 </div>

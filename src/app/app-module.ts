@@ -1,5 +1,7 @@
-import { NgModule, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { NgModule, LOCALE_ID, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
@@ -13,8 +15,8 @@ import { DashboardModule } from './modules/dashboard/dashboard-module';
 import { GymModule } from './modules/gym/gym-module';
 import { SuscripcionModule } from './modules/suscripcion/suscripcion-module';
 
+registerLocaleData(localeEs);
 
-  
 @NgModule({
   declarations: [
     App,
@@ -30,8 +32,8 @@ import { SuscripcionModule } from './modules/suscripcion/suscripcion-module';
     GymModule,
     SuscripcionModule
   ],
-
   providers: [
+    { provide: LOCALE_ID, useValue: 'es' },
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay())

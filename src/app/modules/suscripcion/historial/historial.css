@@ -1,0 +1,52 @@
+.container {
+    max-width: 1200px;
+    padding-bottom: 2rem;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden; /* Para las esquinas redondeadas de la tabla */
+}
+
+.search-card {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+
+.table th {
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 1rem;
+    border-bottom: 2px solid #eee;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 1rem;
+    font-size: 0.95rem;
+}
+
+.badge {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+}
+
+.bg-info {
+    background-color: #e3f2fd !important;
+    color: #0c5460 !important;
+}
+
+.btn-outline-danger {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
