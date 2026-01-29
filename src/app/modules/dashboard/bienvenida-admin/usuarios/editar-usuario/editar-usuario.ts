@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsuarioService } from '../../../../../services/usuario';
 import { firstValueFrom } from 'rxjs';
-import { take } from 'rxjs/operators'; // 👈 FALTABA ESTA IMPORTACIÓN
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-editar-usuario',
@@ -25,10 +25,8 @@ export class EditarUsuario implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // 1. Obtener ID
     this.uid = this.route.snapshot.paramMap.get('id') || '';
 
-    // 2. Iniciar Formulario
     this.editarForm = this.fb.group({
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
@@ -37,37 +35,32 @@ export class EditarUsuario implements OnInit {
       telefono: ['']
     });
 
-    // 3. Cargar datos si existe UID
     if (this.uid) {
       this.cargarDatosUsuario();
     } else {
       alert("Error: No se detectó un ID de usuario válido.");
       this.cargando = false;
-      this.router.navigate(['/admin/usuarios']);
+      // --- RUTA CORREGIDA SEGÚN TU CONFIGURACIÓN ---
+      this.router.navigate(['/admin/usuarios']); 
     }
   }
 
   async cargarDatosUsuario() {
     this.cargando = true;
-    this.cdr.detectChanges(); // Forzar spinner
+    this.cdr.detectChanges();
 
     try {
-      console.log("Buscando usuario ID:", this.uid);
-
-      // Usamos take(1) para que el Observable se complete y la Promesa se resuelva
       const usuario: any = await firstValueFrom(
         this.usuarioService.obtenerUsuario(this.uid).pipe(take(1))
       );
 
-      console.log("Usuario encontrado:", usuario);
-
       if (usuario) {
         this.editarForm.patchValue({
-          nombre: usuario.nombre,
-          apellido: usuario.apellido,
-          ci: usuario.ci,
-          email: usuario.email,
-          telefono: usuario.telefono
+          nombre: usuario.nombre || '',
+          apellido: usuario.apellido || '',
+          ci: usuario.ci || '',
+          email: usuario.email || '',
+          telefono: usuario.telefono || ''
         });
       } else {
         alert("El usuario no existe en la base de datos.");
@@ -78,7 +71,7 @@ export class EditarUsuario implements OnInit {
       alert('Error al cargar usuario.');
     } finally {
       this.cargando = false;
-      this.cdr.detectChanges(); // Quitar spinner
+      this.cdr.detectChanges();
     }
   }
 
@@ -88,17 +81,31 @@ export class EditarUsuario implements OnInit {
       return;
     }
 
+    const rawValues = this.editarForm.value;
+
+    // Limpieza para evitar 'undefined' en Firestore
+    const datosLimpios = {
+      nombre: rawValues.nombre || '',
+      apellido: rawValues.apellido || '',
+      ci: rawValues.ci || '',
+      email: rawValues.email || '',
+      telefono: rawValues.telefono || ''
+    };
+
     try {
-      await this.usuarioService.actualizarDatosUsuario(this.uid, this.editarForm.value);
+      await this.usuarioService.actualizarDatosUsuario(this.uid, datosLimpios);
       alert('Usuario actualizado correctamente');
-      this.router.navigate(['/admin/usuarios']);
+      
+      // --- NAVEGACIÓN EXITOSA HACIA LA LISTA ---
+      this.router.navigate(['/admin/usuarios']); 
     } catch (error) {
-      console.error(error);
+      console.error("Error al guardar:", error);
       alert('Error al guardar los cambios');
     }
   }
 
   cancelar() {
+    // --- VUELVE A LA LISTA DE USUARIOS ---
     this.router.navigate(['/admin/usuarios']);
   }
 }

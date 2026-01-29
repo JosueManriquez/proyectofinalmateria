@@ -26,6 +26,7 @@ export class CrearUsuario implements OnInit {
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       apellido: ['', Validators.required],
       ci: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]], // Solo números
+      telefono: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       rol: ['usuario', Validators.required]
@@ -39,12 +40,13 @@ export class CrearUsuario implements OnInit {
     }
 
     this.cargando = true;
-    const { nombre, apellido, ci, email, password, rol } = this.crearForm.value;
+    const { nombre, apellido, ci,telefono, email, password, rol } = this.crearForm.value;
 
     const datos: UsuarioCrear = {
       nombre,
       apellido,
       ci,
+      telefono,
       rol
     };
 

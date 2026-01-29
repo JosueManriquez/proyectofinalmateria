@@ -10,6 +10,7 @@ export interface UsuarioCrear {
   nombre: string;
   apellido: string;
   ci: string;
+  telefono: string;
   rol: 'admin' | 'usuario' | 'cliente';
   email?: string;
 }
@@ -49,10 +50,10 @@ export class UsuarioService {
       nombre: datos.nombre,
       apellido: datos.apellido,
       ci: datos.ci,
+      telefono: datos.telefono,
       email: email,
       rol: datos.rol,
       activo: true,
-      telefono: '',
       fechaRegistro: new Date()
     };
 

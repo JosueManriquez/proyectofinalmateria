@@ -1,111 +1,120 @@
-<div class="container mt-5 fade-in">
+<div class="container mt-4 animate__animated animate__fadeIn">
   <div class="row justify-content-center">
-    <div class="col-lg-7 col-md-9">
-      
-      <div class="card shadow-lg border-0 rounded-lg">
+    <div class="col-lg-8">
+      <div class="card shadow-lg border-0">
         
-        <div class="card-header bg-primary text-white text-center py-4 header-gradient">
-          <div class="mb-2">
-            <i class="fa fa-user-plus fa-3x"></i>
+        <div class="card-header header-gradient text-white py-3">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-user-plus fa-2x me-3"></i>
+            <div>
+              <h4 class="mb-0 fw-bold">Nuevo Usuario</h4>
+              <small class="text-white-50">Complete la información para registrar un nuevo acceso</small>
+            </div>
           </div>
-          <h3 class="mb-0 fw-bold">Nuevo Usuario</h3>
-          <p class="mb-0 opacity-75">Registra un nuevo miembro en el sistema</p>
         </div>
 
-        <div class="card-body p-4 p-md-5">
-          
+        <div class="card-body p-4">
           <form [formGroup]="crearForm" (ngSubmit)="crear()">
             
             <div class="row g-3 mb-3">
               <div class="col-md-6">
-                <label class="form-label text-muted fw-bold small">NOMBRE</label>
+                <label class="form-label fw-bold text-muted">Nombre</label>
                 <div class="input-group">
-                  <span class="input-group-text bg-light"><i class="fa fa-user text-muted"></i></span>
-                  <input type="text" class="form-control" formControlName="nombre" placeholder="Ej: Juan">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  <input type="text" class="form-control" formControlName="nombre" placeholder="Ej. Juan">
                 </div>
                 <div *ngIf="crearForm.get('nombre')?.touched && crearForm.get('nombre')?.invalid" class="text-danger small mt-1">
-                  Nombre requerido (mín. 3 letras)
+                  Ingrese un nombre válido (min 3 letras).
                 </div>
               </div>
+
               <div class="col-md-6">
-                <label class="form-label text-muted fw-bold small">APELLIDO</label>
+                <label class="form-label fw-bold text-muted">Apellido</label>
                 <div class="input-group">
-                  <span class="input-group-text bg-light"><i class="fa fa-user text-muted"></i></span>
-                  <input type="text" class="form-control" formControlName="apellido" placeholder="Ej: Perez">
+                  <span class="input-group-text"><i class="fas fa-signature"></i></span>
+                  <input type="text" class="form-control" formControlName="apellido" placeholder="Ej. Pérez">
                 </div>
                 <div *ngIf="crearForm.get('apellido')?.touched && crearForm.get('apellido')?.invalid" class="text-danger small mt-1">
-                  Apellido requerido
+                  El apellido es obligatorio.
                 </div>
               </div>
             </div>
 
             <div class="row g-3 mb-3">
               <div class="col-md-6">
-                <label class="form-label text-muted fw-bold small">CÉDULA DE IDENTIDAD</label>
+                <label class="form-label fw-bold text-muted">Cédula de Identidad</label>
                 <div class="input-group">
-                  <span class="input-group-text bg-light"><i class="fa fa-id-card text-muted"></i></span>
+                  <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                   <input type="text" class="form-control" formControlName="ci" placeholder="Solo números">
                 </div>
                 <div *ngIf="crearForm.get('ci')?.touched && crearForm.get('ci')?.invalid" class="text-danger small mt-1">
-                  CI válido requerido
+                  Ingrese un CI válido.
                 </div>
               </div>
+
               <div class="col-md-6">
-                <label class="form-label text-muted fw-bold small">ROL DE ACCESO</label>
+                <label class="form-label fw-bold text-muted">Teléfono / Celular</label>
                 <div class="input-group">
-                  <span class="input-group-text bg-light"><i class="fa fa-shield-alt text-muted"></i></span>
+                  <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                  <input type="tel" class="form-control" formControlName="telefono" placeholder="Ej. 77712345">
+                </div>
+                <div *ngIf="crearForm.get('telefono')?.touched && crearForm.get('telefono')?.invalid" class="text-danger small mt-1">
+                  El teléfono es obligatorio.
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-8">
+                <label class="form-label fw-bold text-muted">Correo Electrónico</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                  <input type="email" class="form-control" formControlName="email" placeholder="usuario@ejemplo.com">
+                </div>
+                <div *ngIf="crearForm.get('email')?.touched && crearForm.get('email')?.invalid" class="text-danger small mt-1">
+                  Ingrese un correo válido.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold text-muted">Rol</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
                   <select class="form-select" formControlName="rol">
-                    <option value="usuario">Usuario (Estándar)</option>
+                    <option value="usuario">Usuario</option>
                     <option value="admin">Administrador</option>
-                    <option value="cliente">Cliente (Solo lectura)</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label text-muted fw-bold small">CORREO ELECTRÓNICO</label>
-              <div class="input-group">
-                <span class="input-group-text bg-light"><i class="fa fa-envelope text-muted"></i></span>
-                <input type="email" class="form-control" formControlName="email" placeholder="ejemplo@correo.com">
-              </div>
-              <div *ngIf="crearForm.get('email')?.touched && crearForm.get('email')?.invalid" class="text-danger small mt-1">
-                Correo inválido
-              </div>
-            </div>
-
             <div class="mb-4">
-              <label class="form-label text-muted fw-bold small">CONTRASEÑA</label>
+              <label class="form-label fw-bold text-muted">Contraseña</label>
               <div class="input-group">
-                <span class="input-group-text bg-light"><i class="fa fa-lock text-muted"></i></span>
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
                 <input [type]="verPassword ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Mínimo 6 caracteres">
                 <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
-                  <i class="fa" [ngClass]="verPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  <i class="fas" [ngClass]="verPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
                 </button>
               </div>
               <div *ngIf="crearForm.get('password')?.touched && crearForm.get('password')?.invalid" class="text-danger small mt-1">
-                La contraseña debe tener al menos 6 caracteres
+                La contraseña debe tener al menos 6 caracteres.
               </div>
             </div>
 
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary py-2 shadow-sm fw-bold" 
-                [disabled]="crearForm.invalid || cargando">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-light border me-md-2" routerLink="/admin/usuarios">
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary px-5" [disabled]="crearForm.invalid || cargando">
                 <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
-                {{ cargando ? 'Registrando...' : 'Registrar Usuario' }}
+                {{ cargando ? 'Guardando...' : 'Crear Usuario' }}
               </button>
             </div>
 
           </form>
         </div>
       </div>
-      
-      <div class="text-center mt-3">
-        <a routerLink="/admin/usuarios" class="text-decoration-none text-muted">
-          <i class="fa fa-arrow-left me-1"></i> Volver a la lista
-        </a>
-      </div>
-
     </div>
   </div>
 </div>
