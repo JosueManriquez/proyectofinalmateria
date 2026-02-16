@@ -1,19 +1,19 @@
 <div class="admin-container">
-  
+
   <aside class="sidebar shadow">
-    
+
     <div class="sidebar-header" routerLink="/admin" style="cursor: pointer;" title="Ir al Inicio">
       <div class="brand">
         <i class="fas fa-dumbbell me-2"></i> GymSystem
       </div>
     </div>
-    
+
     <nav class="sidebar-nav">
-      
+
       <div class="nav-section">GESTIÓN DE SOCIOS</div>
-      
-      <a routerLink="/admin/usuarios" routerLinkActive="active" 
-         [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+
+      <a routerLink="/admin/usuarios" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-link">
         <i class="fas fa-users icon"></i> Listar Usuarios
       </a>
       <a routerLink="/admin/usuarios/crear" routerLinkActive="active" class="nav-link">
@@ -21,15 +21,18 @@
       </a>
 
       <div class="nav-section mt-3">MEMBRESÍAS</div>
-      
+
       <a routerLink="/admin/suscripcion/renovar-suscripcion" routerLinkActive="active" class="nav-link">
         <i class="fas fa-sync-alt icon"></i> Renovar / Vender
       </a>
       <a routerLink="/admin/suscripcion/historial" routerLinkActive="active" class="nav-link">
         <i class="fas fa-history icon"></i> Historial de Suscripciones
       </a>
-      
-      </nav>
+      <a class="nav-link" routerLink="/admin/gestionar-planes">
+        <i class="fas fa-tags fa-fw"></i><span>   Planes y Precios </span>
+      </a>
+
+    </nav>
 
     <div class="sidebar-footer">
       <small>By Josue</small>
@@ -37,7 +40,7 @@
   </aside>
 
   <main class="main-content">
-    
+
     <header class="topbar shadow-sm">
       <h4 class="page-title">Panel de Administración</h4>
       <button class="btn btn-outline-danger btn-sm d-flex align-items-center" (click)="cerrarSesion()">

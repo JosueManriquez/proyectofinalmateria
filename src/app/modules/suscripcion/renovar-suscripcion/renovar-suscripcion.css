@@ -1,4 +1,6 @@
-/* Animación */
+/* ================= CÓDIGO ORIGINAL (MANTENIDO) ================= */
+
+/* Animación de entrada */
 .fade-in {
     animation: fadeIn 0.5s ease-out forwards;
 }
@@ -28,15 +30,18 @@
     justify-content: center;
     font-size: 1.5rem;
     font-weight: 700;
+    /* Aseguramos que el texto no se desborde */
+    overflow: hidden; 
 }
 
 .bg-gradient-info {
     background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);
 }
 
-/* Tarjetas */
+/* Tarjetas Base */
 .card {
     border-radius: 12px;
+    border: none; /* Quitamos bordes por defecto para usar sombras */
 }
 
 /* Badges Modernos */
@@ -54,8 +59,8 @@
 
 /* Inputs y Selects */
 .form-control:focus, .form-select:focus {
-    box-shadow: none;
-    border-color: #1cc88a; /* Verde éxito */
+    box-shadow: 0 0 0 0.25rem rgba(28, 200, 138, 0.25);
+    border-color: #1cc88a;
 }
 
 /* Textos */
@@ -71,4 +76,76 @@
 .btn-success {
     background-color: #1cc88a;
     border-color: #1cc88a;
+}
+
+/* ================= LO NUEVO (PARA EL MODAL Y PLANES) ================= */
+
+/* 1. Efecto Hover en las Tarjetas de Planes */
+.hover-scale {
+    transition: all 0.3s ease;
+    border: 2px solid transparent; /* Para evitar saltos al hacer hover */
+}
+
+.hover-scale:hover {
+    transform: translateY(-8px); /* Se levanta un poco */
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.15)!important;
+    border-color: #4e73df; /* Borde azul al pasar el mouse */
+    background-color: #f8f9fc;
+}
+
+/* 2. Cursores y Bordes */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.border-dashed {
+    border-style: dashed !important;
+    border-width: 2px !important;
+    background-color: #f8f9fa;
+    transition: background 0.3s;
+}
+
+.border-dashed:hover {
+    background-color: #e2e6ea;
+}
+
+/* 3. Estilos del Modal (Manuales por si Bootstrap JS no carga el backdrop) */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+    z-index: 1040;
+}
+
+.modal.show {
+    display: block; /* Forzar que se muestre */
+    background-color: rgba(0,0,0,0.5); /* Fondo oscuro extra por seguridad */
+}
+
+/* 4. Estilo para el Plan Seleccionado en el Formulario */
+.bg-primary-subtle {
+    background-color: #e6f0ff; /* Azul muy clarito */
+    border: 1px solid #b3d7ff;
+}
+
+/* 5. Imágenes dentro de las tarjetas */
+.plan-card .card-img-top {
+    height: 120px; /* Altura fija para que todas las tarjetas sean iguales */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.plan-card img {
+    max-height: 80px;
+    transition: transform 0.3s;
+}
+
+.plan-card:hover img {
+    transform: scale(1.1); /* Efecto zoom en la imagen */
 }

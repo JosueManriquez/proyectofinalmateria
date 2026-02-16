@@ -5,6 +5,7 @@ import { SuscripcionService } from '../../../services/suscripcion';
 import { UsuarioService } from '../../../services/usuario';
 import { SuscripcionModelo } from '../../../models/suscripcion';
 import { UsuarioModelo } from '../../../models/usuario.model';
+import { PlanModelo } from '../../../models/plan.model'; // IMPORTAR
 import { firstValueFrom, Subscription } from 'rxjs';
 import { Timestamp } from 'firebase/firestore';
 
@@ -26,7 +27,11 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
   minFechaInicio: string = '';
   private subHistorial: Subscription | null = null;
 
-  tipos = ['MENSUAL', 'TRIMESTRAL', 'ANUAL'];
+  // NUEVAS VARIABLES PARA PLANES
+  listaPlanes: PlanModelo[] = [];
+  planSeleccionado: PlanModelo | null = null;
+  mostrarModalPlanes: boolean = false; // Controla la visibilidad del modal
+
   mensajeError: string = '';
 
   constructor(
@@ -37,42 +42,89 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    // 1. Cargar los planes disponibles al iniciar
+    this.cargarPlanes();
+
     this.searchForm = this.fb.group({
       ci: ['', Validators.required]
     });
 
     this.renovarForm = this.fb.group({
-      tipo: ['MENSUAL', Validators.required],
+      nombrePlan: ['', Validators.required], // Solo lectura
+      precio: [0, Validators.required],      // Solo lectura
       fechaInicio: ['', Validators.required],
       fechaFin: ['', Validators.required]
     });
 
-    this.renovarForm.get('tipo')?.valueChanges.subscribe(() => this.calcularFechaFin());
-    this.renovarForm.get('fechaInicio')?.valueChanges.subscribe(() => this.calcularFechaFin());
+    // Recalcular fecha fin si cambia la fecha de inicio manual
+    this.renovarForm.get('fechaInicio')?.valueChanges.subscribe(() => {
+      if (this.planSeleccionado) this.actualizarFechaFin();
+    });
   }
 
   ngOnDestroy(): void {
-    if (this.subHistorial) {
-      this.subHistorial.unsubscribe();
-    }
+    if (this.subHistorial) this.subHistorial.unsubscribe();
   }
 
+  cargarPlanes() {
+    this.suscripcionService.obtenerPlanesActivos().subscribe(planes => {
+      this.listaPlanes = planes;
+    });
+  }
+
+  // --- LÓGICA DEL MODAL ---
+  abrirModalPlanes() {
+    this.mostrarModalPlanes = true;
+  }
+
+  cerrarModalPlanes() {
+    this.mostrarModalPlanes = false;
+  }
+
+  seleccionarPlan(plan: PlanModelo) {
+    this.planSeleccionado = plan;
+    
+    // Asignar valores al formulario
+    this.renovarForm.patchValue({
+      nombrePlan: plan.nombre,
+      precio: plan.precio
+    });
+
+    this.actualizarFechaFin();
+    this.cerrarModalPlanes();
+  }
+
+  actualizarFechaFin() {
+    const inicioStr = this.renovarForm.get('fechaInicio')?.value;
+    if (!inicioStr || !this.planSeleccionado) return;
+
+    const inicio = this.parseFechaLocal(inicioStr);
+    const fin = new Date(inicio);
+    
+    // Sumar los días exactos que dice el plan
+    fin.setDate(fin.getDate() + this.planSeleccionado.duracionDias);
+
+    this.renovarForm.patchValue({
+      fechaFin: this.formatDateString(fin)
+    });
+  }
+
+  // ... (MANTENER CÓDIGO DE buscarUsuario IGUAL) ...
   async buscarUsuario() {
     this.mensajeError = '';
     this.usuarioEncontrado = null;
     this.historialSuscripciones = [];
     this.ultimaSuscripcion = null;
+    this.planSeleccionado = null; // Resetear plan
+    this.renovarForm.reset();
 
-    if (this.subHistorial) {
-      this.subHistorial.unsubscribe();
-    }
+    if (this.subHistorial) this.subHistorial.unsubscribe();
 
     const ci = this.searchForm.value.ci;
     if (!ci) return;
 
     try {
       const usuario = await firstValueFrom(this.usuarioService.obtenerUsuarioPorCI(ci));
-
       if (!usuario) {
         this.mensajeError = 'Usuario no encontrado con ese CI.';
         this.cdr.detectChanges();
@@ -111,7 +163,7 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
 
     if (!esNuevo && this.ultimaSuscripcion) {
       const finAnterior = this.ultimaSuscripcion.fechaFin instanceof Timestamp
-        ? this.ultimaSuscripcion.fechaFin.toDate()
+        ? (this.ultimaSuscripcion.fechaFin as any).toDate()
         : new Date(this.ultimaSuscripcion.fechaFin);
 
       const diaSiguiente = new Date(finAnterior);
@@ -124,55 +176,47 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
     }
 
     this.renovarForm.patchValue({
-      tipo: 'MENSUAL',
       fechaInicio: this.formatDateString(fechaSugerida)
     });
-
-    this.calcularFechaFin();
+    // Nota: No calculamos fin aquí porque falta seleccionar el plan
   }
 
-  calcularFechaFin() {
-    const tipo = this.renovarForm.get('tipo')?.value;
-    const inicioStr = this.renovarForm.get('fechaInicio')?.value;
-
-    if (!inicioStr || !tipo) return;
-
-    const inicio = this.parseFechaLocal(inicioStr);
-    const fin = new Date(inicio);
-
-    if (tipo === 'MENSUAL') fin.setMonth(fin.getMonth() + 1);
-    else if (tipo === 'TRIMESTRAL') fin.setMonth(fin.getMonth() + 3);
-    else if (tipo === 'ANUAL') fin.setFullYear(fin.getFullYear() + 1);
-
-    fin.setDate(fin.getDate() - 1);
-
-    this.renovarForm.patchValue({
-      fechaFin: this.formatDateString(fin)
-    }, { emitEvent: false });
-  }
-
-  // --- ACCIÓN PRINCIPAL CORREGIDA ---
   async procesarRenovacion() {
-    if (this.renovarForm.invalid || !this.usuarioEncontrado) return;
+    if (this.renovarForm.invalid || !this.usuarioEncontrado || !this.planSeleccionado) {
+        alert("Por favor selecciona un plan.");
+        return;
+    }
 
-    const { tipo, fechaInicio, fechaFin } = this.renovarForm.value;
+    const { fechaInicio, fechaFin, precio } = this.renovarForm.value; // Ya tenemos precio del form
     const inicioDate = this.parseFechaLocal(fechaInicio);
     const finDate = this.parseFechaLocal(fechaFin);
 
     try {
       if (this.ultimaSuscripcion) {
-        await this.suscripcionService.renovarSuscripcion(
-          this.ultimaSuscripcion,
-          tipo,
-          inicioDate,
-          finDate
-        );
+        // Lógica de renovar
+        // NOTA: Debes actualizar renovarSuscripcion en el servicio para aceptar precioPagado si quieres
+         const nueva: SuscripcionModelo = {
+          UsuarioModeloCi: this.usuarioEncontrado.ci || '',
+          UsuarioModeloApellido: this.usuarioEncontrado.apellido || '',
+          tipo: this.planSeleccionado.nombre, // Usamos el nombre del plan
+          precioPagado: precio, // Guardamos cuánto pagó
+          fechaInicio: inicioDate,
+          fechaFin: finDate,
+          activa: true
+        };
+        // Aquí puedes adaptar el servicio para desactivar la anterior y crear esta nueva manualmente
+        // O actualizar tu método renovarSuscripcion
+        if (this.ultimaSuscripcion.id) {
+            await this.suscripcionService.activarDesactivar(this.ultimaSuscripcion.id, false);
+        }
+        await this.suscripcionService.crearSuscripcion(nueva);
+
       } else {
-        // CORRECCIÓN: Usar operador OR (||) para evitar 'undefined' en Firestore
         const nueva: SuscripcionModelo = {
           UsuarioModeloCi: this.usuarioEncontrado.ci || '',
-          UsuarioModeloApellido: this.usuarioEncontrado.apellido || '', // Evita el error de la imagen
-          tipo,
+          UsuarioModeloApellido: this.usuarioEncontrado.apellido || '',
+          tipo: this.planSeleccionado.nombre,
+          precioPagado: precio,
           fechaInicio: inicioDate,
           fechaFin: finDate,
           activa: true
@@ -185,12 +229,13 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
 
     } catch (error) {
       console.error(error);
-      alert('Error al procesar la suscripción. Revisa la consola.');
+      alert('Error al procesar la suscripción.');
     }
   }
 
   private limpiarPantalla() {
     this.renovarForm.reset();
+    this.planSeleccionado = null;
     this.usuarioEncontrado = null;
     this.searchForm.reset();
     this.historialSuscripciones = [];

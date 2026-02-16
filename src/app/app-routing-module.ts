@@ -22,8 +22,10 @@ import { EditarUsuario } from './modules/dashboard/bienvenida-admin/usuarios/edi
 // Componentes de Suscripción (Admin)
 import { RenovarSuscripcion } from './modules/suscripcion/renovar-suscripcion/renovar-suscripcion';
 import { Historial } from './modules/suscripcion/historial/historial';
-import { CrearSuscripcion } from './modules/suscripcion/crear-suscripcion/crear-suscripcion';
+/* import { CrearSuscripcion } from './modules/suscripcion/crear-suscripcion/crear-suscripcion';
+ */
 
+import { GestionarPlanes } from './modules/suscripcion/gestionar-planes/gestionar-planes'; // NUEVO
 // Componentes de Usuario/Cliente y Gym
 import { BienvenidaUsuario } from './modules/dashboard/bienvenida-usuario/bienvenida-usuario';
 import { Ingreso } from './modules/gym/ingreso/ingreso';
@@ -62,9 +64,10 @@ const routes: Routes = [
       { path: 'usuarios/editar/:id', component: EditarUsuario },
 
       // Gestión de Suscripciones
-      { path: 'suscripcion/crear-suscripcion', component: CrearSuscripcion },
+      /* { path: 'suscripcion/crear-suscripcion', component: CrearSuscripcion }, */
       { path: 'suscripcion/renovar-suscripcion', component: RenovarSuscripcion },
-      { path: 'suscripcion/historial', component: Historial }
+      { path: 'suscripcion/historial', component: Historial },
+      { path: 'gestionar-planes', component: GestionarPlanes },
     ]
   },
 

@@ -3,9 +3,10 @@ export interface SuscripcionModelo {
   UsuarioModeloApellido: string;
 
   id?: string;
-  tipo: 'MENSUAL' | 'TRIMESTRAL' | 'ANUAL';
+  // Cambiamos 'tipo' para que acepte cualquier string (el nombre del plan)
+  tipo: string; 
+  precioPagado: number; // NUEVO: Para tus reportes de ganancias
   fechaInicio: Date;
   fechaFin: Date;
   activa: boolean;
 }
-  

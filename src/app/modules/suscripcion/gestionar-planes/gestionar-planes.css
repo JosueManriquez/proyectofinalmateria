@@ -1,0 +1,6 @@
+/* Copia aquí el mismo CSS de fade-in, modal-backdrop, etc. que te pasé antes */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1040;
+}
+.modal.show { display: block; }

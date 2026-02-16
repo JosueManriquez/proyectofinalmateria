@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+/* import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SuscripcionService } from '../../../services/suscripcion';
@@ -187,4 +187,4 @@ export class CrearSuscripcion implements OnInit {
     const day = d.getDate().toString().padStart(2, '0');
     return `${d.getFullYear()}-${month}-${day}`;
   }
-}
+} */

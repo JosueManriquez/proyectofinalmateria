@@ -1,0 +1,142 @@
+<div class="container mt-4 fade-in">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-0"><i class="fa fa-tags me-2"></i>Gestión de Planes</h2>
+            <p class="text-muted">Crea, edita y administra los precios de suscripción.</p>
+        </div>
+        <button class="btn btn-primary fw-bold shadow-sm" (click)="abrirModalCrear()">
+            <i class="fa fa-plus me-2"></i> NUEVO PLAN
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary text-uppercase text-xs fw-bold">
+                        <tr>
+                            <th class="ps-4">Imagen</th>
+                            <th>Nombre</th>
+                            <th class="text-center">Días</th>
+                            <th class="text-center">Precio</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let plan of listaPlanes">
+                            <td class="ps-4">
+                                <img [src]="plan.imagenUrl || 'assets/img/gym-placeholder.png'"
+                                    class="rounded border bg-white" width="50" height="50" style="object-fit: cover;">
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">{{ plan.nombre }}</div>
+                                <small class="text-muted">{{ plan.descripcion }}</small>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-info text-dark">{{ plan.duracionDias }} días</span>
+                            </td>
+                            <td class="text-center fw-bold text-success fs-6">
+                                {{ plan.precio }} Bs
+                            </td>
+                            <td class="text-center">
+                                <span class="badge rounded-pill" [ngClass]="plan.activo ? 'bg-success' : 'bg-danger'">
+                                    {{ plan.activo ? 'ACTIVO' : 'INACTIVO' }}
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <button class="btn btn-sm btn-outline-primary me-2" (click)="abrirModalEditar(plan)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm"
+                                    [ngClass]="plan.activo ? 'btn-outline-danger' : 'btn-outline-success'"
+                                    (click)="alternarEstado(plan)">
+                                    <i class="fa" [ngClass]="plan.activo ? 'fa-ban' : 'fa-check'"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="mostrarModal"></div>
+<div class="modal fade show d-block" tabindex="-1" *ngIf="mostrarModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold">
+                    {{ modoEdicion ? 'Editar Plan' : 'Crear Nuevo Plan' }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+            </div>
+            <div class="modal-body bg-light p-4">
+
+                <form [formGroup]="planForm" (ngSubmit)="guardarPlan()">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">NOMBRE DEL PLAN</label>
+                        <input type="text" class="form-control" formControlName="nombre" placeholder="Ej: Mensual VIP">
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold small text-muted">PRECIO (Bs)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Bs</span>
+                                <input type="number" class="form-control" formControlName="precio">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold small text-muted">DURACIÓN (Días)</label>
+                            <input type="number" class="form-control" formControlName="duracionDias">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">DESCRIPCIÓN CORTA</label>
+                        <textarea class="form-control" formControlName="descripcion" rows="2"
+                            placeholder="Ej: Acceso a sauna y pesas..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted">IMAGEN DEL PLAN</label>
+
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="position-relative">
+                                <img [src]="imagenPreview || 'assets/img/gym-placeholder.png'"
+                                    class="rounded-circle border shadow-sm" width="80" height="80"
+                                    style="object-fit: cover;">
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <input type="file" class="form-control" (change)="onFileSelected($event)"
+                                    accept="image/*">
+                                <div class="form-text text-muted text-xs mt-1">
+                                    Formatos aceptados: JPG, PNG. Máx 2MB.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="subiendoImagen" class="alert alert-info py-2 mb-3 text-center">
+                        <i class="fa fa-spinner fa-spin me-2"></i> Subiendo imagen a la nube...
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success py-2 fw-bold shadow-sm"
+                            [disabled]="planForm.invalid">
+                            <i class="fa fa-save me-2"></i> GUARDAR PLAN
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

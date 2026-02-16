@@ -2,8 +2,10 @@ import { Injectable, Injector, runInInjectionContext } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { SuscripcionModelo } from '../models/suscripcion';
 import { UsuarioModelo } from '../models/usuario.model';
+import { PlanModelo } from '../models/plan.model';
 import { Observable } from 'rxjs';
-import { map, first } from 'rxjs/operators';
+import { map, first,finalize } from 'rxjs/operators';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +14,9 @@ export class SuscripcionService {
 
   constructor(
     private afs: AngularFirestore,
-    private injector: Injector
-  ) {}
+    private injector: Injector,
+    private storage: AngularFireStorage,
+  ) { }
 
   // Crear suscripción
   crearSuscripcion(suscripcion: SuscripcionModelo): Promise<void> {
@@ -69,13 +72,13 @@ export class SuscripcionService {
     return runInInjectionContext(this.injector, () => {
       return this.afs.collection<SuscripcionModelo>('suscripciones', ref =>
         ref.where('UsuarioModeloCi', '==', ciUsuario)
-           .where('activa', '==', true)
+          .where('activa', '==', true)
       )
-      .valueChanges({ idField: 'id' })
-      .pipe(
-        map(arr => arr.length ? arr[0] : null),
-        first()
-      );
+        .valueChanges({ idField: 'id' })
+        .pipe(
+          map(arr => arr.length ? arr[0] : null),
+          first()
+        );
     });
   }
 
@@ -85,11 +88,11 @@ export class SuscripcionService {
       return this.afs.collection<UsuarioModelo>('usuarios', ref =>
         ref.where('ci', '==', ci)
       )
-      .valueChanges()
-      .pipe(
-        map(arr => arr.length ? arr[0] : null),
-        first()
-      );
+        .valueChanges()
+        .pipe(
+          map(arr => arr.length ? arr[0] : null),
+          first()
+        );
     });
   }
 
@@ -98,14 +101,14 @@ export class SuscripcionService {
     return runInInjectionContext(this.injector, () => {
       return this.afs.collection<SuscripcionModelo>('suscripciones', ref =>
         ref.where('UsuarioModeloCi', '==', ciUsuario)
-           .orderBy('fechaFin', 'desc')
-           .limit(1)
+          .orderBy('fechaFin', 'desc')
+          .limit(1)
       )
-      .valueChanges({ idField: 'id' })
-      .pipe(
-        map(arr => arr.length ? arr[0] : null),
-        first()
-      );
+        .valueChanges({ idField: 'id' })
+        .pipe(
+          map(arr => arr.length ? arr[0] : null),
+          first()
+        );
     });
   }
 
@@ -114,27 +117,27 @@ export class SuscripcionService {
     return runInInjectionContext(this.injector, () => {
       return this.afs.collection<SuscripcionModelo>('suscripciones', ref =>
         ref.where('UsuarioModeloCi', '==', ci)
-           .orderBy('fechaFin', 'desc')
+          .orderBy('fechaFin', 'desc')
       )
-      .valueChanges({ idField: 'id' });
+        .valueChanges({ idField: 'id' });
     });
   }
-
   // Renovar suscripción
   // Nota: Como este método llama a otros que ya tienen el contexto inyectado,
   // el wrapper principal asegura que la lógica de negocio se mantenga en el contexto.
   async renovarSuscripcion(
     suscripcionAnterior: SuscripcionModelo,
-    tipo: 'MENSUAL' | 'TRIMESTRAL' | 'ANUAL',
+    tipo: string,        // Cambiado a string para aceptar nombres de planes personalizados
+    precio: number,      // <--- NUEVO PARAMETRO OBLIGATORIO
     fechaInicio: Date,
     fechaFin: Date
   ): Promise<SuscripcionModelo> {
-    
+
     return runInInjectionContext(this.injector, async () => {
-      
+
       // 1. Desactivar anterior
       if (suscripcionAnterior.activa && suscripcionAnterior.id) {
-        await this.activarDesactivar(suscripcionAnterior.id, false);
+        await this.activarDesactivar(suscripcionAnterior.id, false); // Asumiendo que tienes este método
       }
 
       // 2. Crear nueva
@@ -142,9 +145,10 @@ export class SuscripcionService {
         UsuarioModeloCi: suscripcionAnterior.UsuarioModeloCi,
         UsuarioModeloApellido: suscripcionAnterior.UsuarioModeloApellido,
         tipo,
+        precioPagado: precio, // <--- AQUI SE ASIGNA EL PRECIO
         fechaInicio,
         fechaFin,
-        activa: true
+        activa: true,
       };
 
       await this.crearSuscripcion(nuevaSuscripcion);
@@ -158,4 +162,47 @@ export class SuscripcionService {
         .valueChanges({ idField: 'id' });
     });
   }
+  obtenerPlanesActivos(): Observable<PlanModelo[]> {
+    return runInInjectionContext(this.injector, () => {
+      return this.afs.collection<PlanModelo>('planes', ref =>
+        ref.where('activo', '==', true).orderBy('precio', 'asc')
+      ).valueChanges({ idField: 'id' });
+    });
+  }
+  crearPlan(plan: PlanModelo): Promise<void> {
+    return runInInjectionContext(this.injector, () => {
+      const id = this.afs.createId();
+      return this.afs.collection('planes').doc(id).set({ ...plan });
+    });
+  }
+
+  // Actualizar un plan existente
+  actualizarPlan(id: string, data: Partial<PlanModelo>): Promise<void> {
+    return runInInjectionContext(this.injector, () => {
+      return this.afs.collection('planes').doc(id).update(data);
+    });
+  }
+
+  obtenerTodosLosPlanes(): Observable<PlanModelo[]> {
+    return runInInjectionContext(this.injector, () => {
+      return this.afs.collection<PlanModelo>('planes', ref =>
+        ref.orderBy('activo', 'desc').orderBy('precio', 'asc')
+      ).valueChanges({ idField: 'id' });
+    });
+  }
+  subirImagen(archivo: File, nombre: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const filePath = `planes/${Date.now()}_${nombre}`; // Evita nombres duplicados
+    const fileRef = this.storage.ref(filePath);
+    const task = this.storage.upload(filePath, archivo);
+
+    task.snapshotChanges().pipe(
+      finalize(() => {
+        fileRef.getDownloadURL().subscribe(url => {
+          resolve(url);
+        }, err => reject(err));
+      })
+    ).subscribe();
+  });
+}
 }
