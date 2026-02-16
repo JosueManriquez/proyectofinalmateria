@@ -18,7 +18,7 @@ export class GestionarPlanes implements OnInit {
   modoEdicion: boolean = false;
   idPlanEditar: string | null = null;
   mostrarModal: boolean = false;
-  
+
   // VARIABLES NUEVAS PARA LA IMAGEN
   imagenSeleccionada: File | null = null;
   imagenPreview: string | ArrayBuffer | null = null;
@@ -55,7 +55,7 @@ export class GestionarPlanes implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.imagenSeleccionada = file;
-      
+
       // Crear preview local para que el usuario vea qué seleccionó
       const reader = new FileReader();
       reader.onload = () => {
@@ -85,8 +85,8 @@ export class GestionarPlanes implements OnInit {
     this.idPlanEditar = plan.id || null;
     this.imagenSeleccionada = null;
     // Si ya tiene imagen, mostrarla en el preview
-    this.imagenPreview = plan.imagenUrl || null; 
-    
+    this.imagenPreview = plan.imagenUrl || null;
+
     this.planForm.patchValue(plan);
     this.mostrarModal = true;
     this.cdr.detectChanges();
@@ -101,15 +101,26 @@ export class GestionarPlanes implements OnInit {
 
   async guardarPlan() {
     if (this.planForm.invalid) return;
-    this.subiendoImagen = true; // Activar spinner
+    this.subiendoImagen = true;
 
     let data = this.planForm.value;
 
     try {
-      // 1. SI EL USUARIO SELECCIONÓ UNA IMAGEN NUEVA, LA SUBIMOS PRIMERO
+      // 1. SI EL USUARIO SELECCIONÓ UNA IMAGEN NUEVA
       if (this.imagenSeleccionada) {
+
+        // --- [NUEVO BLOQUE] GESTIÓN DE RESIDUOS ---
+        // Si estamos editando y el plan YA tenía una foto guardada...
+        if (this.modoEdicion && this.planForm.value.imagenUrl) {
+          // ...¡La borramos antes de subir la nueva!
+          console.log("Eliminando imagen anterior...");
+          await this.subService.eliminarImagen(this.planForm.value.imagenUrl);
+        }
+        // -------------------------------------------
+
+        // Ahora sí, subimos la nueva
         const urlFirebase = await this.subService.subirImagen(this.imagenSeleccionada, data.nombre);
-        data.imagenUrl = urlFirebase; // Reemplazamos el link con el nuevo de Firebase
+        data.imagenUrl = urlFirebase;
       }
 
       // 2. GUARDAMOS LOS DATOS EN FIRESTORE
@@ -120,14 +131,14 @@ export class GestionarPlanes implements OnInit {
         await this.subService.crearPlan(data);
         alert('Plan creado con éxito');
       }
-      
+
       this.cerrarModal();
 
     } catch (error) {
       console.error("Error:", error);
-      alert('Error al subir la imagen o guardar el plan.');
+      alert('Error al procesar la solicitud.');
     } finally {
-      this.subiendoImagen = false; // Desactivar spinner
+      this.subiendoImagen = false;
     }
   }
 

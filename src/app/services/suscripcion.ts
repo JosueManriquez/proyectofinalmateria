@@ -4,7 +4,7 @@ import { SuscripcionModelo } from '../models/suscripcion';
 import { UsuarioModelo } from '../models/usuario.model';
 import { PlanModelo } from '../models/plan.model';
 import { Observable } from 'rxjs';
-import { map, first,finalize } from 'rxjs/operators';
+import { map, first, finalize } from 'rxjs/operators';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Injectable({
@@ -191,18 +191,43 @@ export class SuscripcionService {
     });
   }
   subirImagen(archivo: File, nombre: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const filePath = `planes/${Date.now()}_${nombre}`; // Evita nombres duplicados
-    const fileRef = this.storage.ref(filePath);
-    const task = this.storage.upload(filePath, archivo);
+    return new Promise((resolve, reject) => {
+      const filePath = `planes/${Date.now()}_${nombre}`; // Evita nombres duplicados
+      const fileRef = this.storage.ref(filePath);
+      const task = this.storage.upload(filePath, archivo);
 
-    task.snapshotChanges().pipe(
-      finalize(() => {
-        fileRef.getDownloadURL().subscribe(url => {
-          resolve(url);
-        }, err => reject(err));
-      })
-    ).subscribe();
-  });
-}
+      task.snapshotChanges().pipe(
+        finalize(() => {
+          fileRef.getDownloadURL().subscribe(url => {
+            resolve(url);
+          }, err => reject(err));
+        })
+      ).subscribe();
+    });
+  }
+  eliminarImagen(url: string): Promise<void> {
+    return new Promise((resolve) => {
+      // Si no hay URL, no hay nada que borrar
+      if (!url) { resolve(); return; }
+
+      try {
+        // refFromURL es mágico: extrae la ruta del archivo desde el link largo
+        const ref = this.storage.storage.refFromURL(url);
+
+        ref.delete()
+          .then(() => {
+            console.log("Imagen antigua eliminada correctamente");
+            resolve();
+          })
+          .catch((err) => {
+            // Si falla (ej. el archivo ya no existía), no queremos romper la app
+            console.warn("No se pudo eliminar la imagen antigua:", err);
+            resolve();
+          });
+      } catch (e) {
+        console.error("Error al procesar URL de imagen:", e);
+        resolve();
+      }
+    });
+  }
 }
