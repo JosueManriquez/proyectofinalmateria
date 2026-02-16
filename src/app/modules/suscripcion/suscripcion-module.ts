@@ -1,29 +1,30 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+// 1. IMPORTAR TUS COMPONENTES
 import { RenovarSuscripcion } from './renovar-suscripcion/renovar-suscripcion';
-import { Historial } from './historial/historial';
-import { GestionarPlanes } from './gestionar-planes/gestionar-planes';
-/* import { CrearSuscripcion } from './crear-suscripcion/crear-suscripcion';
- */
-// ✅ CrearSuscripcion es standalone, se importa en imports, NO en declarations
+/* import { CrearSuscripcion } from './crear-suscripcion/crear-suscripcion'; // (Si lo tienes)
+ */import { GestionarPlanes } from './gestionar-planes/gestionar-planes';
+//import { Reportes } from './reportes/reportes.component'; // (Ajusta la ruta si es necesario)
 
+// 2. IMPORTAR LIBRERÍA DE GRÁFICOS (Para que funcione en Reportes)
+/* import { BaseChartDirective } from 'ng2-charts';
+ */
 @NgModule({
   declarations: [
-    // RenovarSuscripcion,
-  
-    /* GestionarPlanes */
-  ],
+    RenovarSuscripcion,
+    //CrearSuscripcion, // Descomenta si lo tienes
+    GestionarPlanes,
+/*     Reportes
+ */  ],
   imports: [
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
-    RouterModule,
-    /* CrearSuscripcion, */
-    RenovarSuscripcion,
-    Historial
-  ]
+    FormsModule,
+    RouterModule, // Importante para la navegación
+/*     BaseChartDirective // <--- Esto habilita los gráficos en este módulo
+ */  ]
 })
-export class SuscripcionModule {}
+export class SuscripcionModule { }

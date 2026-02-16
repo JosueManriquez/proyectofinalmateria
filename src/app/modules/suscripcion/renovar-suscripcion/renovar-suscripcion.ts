@@ -13,9 +13,9 @@ import { Timestamp } from 'firebase/firestore';
   selector: 'app-renovar-suscripcion',
   templateUrl: './renovar-suscripcion.html',
   styleUrls: ['./renovar-suscripcion.css'],
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule]
-})
+  standalone: false,
+/*   imports: [CommonModule, FormsModule, ReactiveFormsModule]
+ */})
 export class RenovarSuscripcion implements OnInit, OnDestroy {
 
   searchForm!: FormGroup;

@@ -6,8 +6,7 @@ import { PlanModelo } from '../../../models/plan.model';
 
 @Component({
   selector: 'app-gestionar-planes',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  standalone: false,
   templateUrl: './gestionar-planes.html',
   styleUrls: ['./gestionar-planes.css']
 })
