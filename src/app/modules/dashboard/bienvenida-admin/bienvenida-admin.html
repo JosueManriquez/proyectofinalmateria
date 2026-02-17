@@ -29,7 +29,7 @@
         <i class="fas fa-history icon"></i> Historial de Suscripciones
       </a>
       <a routerLink="/admin/gestionar-planes" routerLinkActive="active" class="nav-link">
-        <i class="fas fa-tags icon"></i> Planes y Precios 
+        <i class="fas fa-tags icon"></i> Planes y Precios
       </a>
 
       <div class="nav-section mt-3">ANÁLISIS</div>
@@ -47,11 +47,22 @@
 
   <main class="main-content">
 
-    <header class="topbar shadow-sm">
-      <h4 class="page-title">Panel de Administración</h4>
-      <button class="btn btn-outline-danger btn-sm d-flex align-items-center" (click)="cerrarSesion()">
-        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
-      </button>
+    <header class="topbar shadow-sm d-flex justify-content-between align-items-center px-4">
+
+      <h4 class="page-title mb-0">Panel de Administración</h4>
+
+      <div class="d-flex gap-2">
+
+        <a routerLink="/ingreso" target="_blank" class="btn btn-primary btn-sm d-flex align-items-center shadow-sm">
+          <i class="fas fa-desktop me-2"></i> Pantalla de Ingreso
+        </a>
+
+        <button class="btn btn-outline-danger btn-sm d-flex align-items-center" (click)="cerrarSesion()">
+          <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+        </button>
+
+      </div>
+
     </header>
 
     <div class="content-wrapper">
