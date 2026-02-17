@@ -1,5 +1,5 @@
 <div class="container mt-4 fade-in">
-  
+
   <div class="mb-4">
     <h2 class="fw-bold text-primary mb-0"><i class="fa fa-sync-alt me-2"></i>Renovar Suscripción</h2>
     <p class="text-muted">Busca un usuario y selecciona su plan.</p>
@@ -11,7 +11,8 @@
         <label class="form-label fw-bold text-muted small">BUSCAR CLIENTE</label>
         <div class="input-group input-group-lg">
           <span class="input-group-text bg-light border-end-0 text-muted"><i class="fa fa-search"></i></span>
-          <input type="text" class="form-control bg-light border-start-0" placeholder="Ingrese Carnet (CI)..." formControlName="ci">
+          <input type="text" class="form-control bg-light border-start-0" placeholder="Ingrese Carnet (CI)..."
+            formControlName="ci">
           <button type="submit" class="btn btn-primary px-4 fw-bold" [disabled]="searchForm.invalid">BUSCAR</button>
         </div>
       </form>
@@ -20,19 +21,20 @@
   </div>
 
   <div *ngIf="usuarioEncontrado" class="row fade-in">
-    
+
     <div class="col-lg-5 mb-4">
+
       <div class="card border-0 shadow-sm mb-4 overflow-hidden">
         <div class="card-body p-0">
-            <div class="d-flex align-items-center p-4 bg-light">
-                <div class="avatar-circle me-3 bg-gradient-info text-white shadow-sm">
-                    {{ usuarioEncontrado.nombre.charAt(0) | uppercase }}
-                </div>
-                <div>
-                    <h5 class="mb-0 fw-bold text-dark">{{ usuarioEncontrado.nombre }} {{ usuarioEncontrado.apellido }}</h5>
-                    <small class="text-muted">{{ usuarioEncontrado.email }}</small>
-                </div>
+          <div class="d-flex align-items-center p-4 bg-light">
+            <div class="avatar-circle me-3 bg-gradient-info text-white shadow-sm">
+              {{ usuarioEncontrado.nombre.charAt(0) | uppercase }}
             </div>
+            <div>
+              <h5 class="mb-0 fw-bold text-dark">{{ usuarioEncontrado.nombre }} {{ usuarioEncontrado.apellido }}</h5>
+              <small class="text-muted">{{ usuarioEncontrado.email }}</small>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -42,10 +44,10 @@
         </div>
         <div class="card-body p-4">
           <form [formGroup]="renovarForm" (ngSubmit)="procesarRenovacion()">
-            
+
             <div class="mb-3">
               <label class="form-label text-muted fw-bold small">PLAN SELECCIONADO</label>
-              
+
               <div *ngIf="!planSeleccionado" class="d-grid">
                 <button type="button" class="btn btn-outline-primary border-dashed py-3" (click)="abrirModalPlanes()">
                   <i class="fa fa-plus-circle fa-2x mb-2 d-block"></i>
@@ -53,7 +55,8 @@
                 </button>
               </div>
 
-              <div *ngIf="planSeleccionado" class="card border-primary bg-primary-subtle cursor-pointer" (click)="abrirModalPlanes()">
+              <div *ngIf="planSeleccionado" class="card border-primary bg-primary-subtle cursor-pointer"
+                (click)="abrirModalPlanes()">
                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
                   <div>
                     <h6 class="fw-bold text-primary mb-1">{{ planSeleccionado.nombre }}</h6>
@@ -62,24 +65,42 @@
                   <h4 class="fw-bold text-primary mb-0">{{ planSeleccionado.precio }} Bs</h4>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-center pt-0">
-                    <small class="text-primary fw-bold">Clic para cambiar</small>
+                  <small class="text-primary fw-bold">Clic para cambiar</small>
                 </div>
               </div>
             </div>
 
-            <div class="row g-2 mb-4">
+            <div class="row g-2 mb-3">
               <div class="col-6">
                 <label class="form-label text-muted fw-bold small">INICIO</label>
-                <input type="date" class="form-control text-center" formControlName="fechaInicio" [min]="minFechaInicio">
+                <input type="date" class="form-control text-center" formControlName="fechaInicio"
+                  [min]="minFechaInicio">
               </div>
               <div class="col-6">
                 <label class="form-label text-muted fw-bold small">FIN (AUTO)</label>
-                <input type="date" class="form-control text-center bg-light fw-bold" formControlName="fechaFin" readonly>
+                <input type="date" class="form-control text-center bg-light fw-bold" formControlName="fechaFin"
+                  readonly>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label text-muted fw-bold small">MÉTODO DE PAGO</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white">
+                  <i class="fa fa-money-bill-wave text-success"></i>
+                </span>
+
+                <select class="form-select fw-bold" formControlName="metodoPago">
+                  <option value="EFECTIVO">💵 Efectivo</option>
+                  <option value="QR">📱 Transferencia QR / Banco</option>
+                </select>
+
               </div>
             </div>
 
             <div class="d-grid">
-              <button type="submit" class="btn btn-success py-2 shadow-sm fw-bold" [disabled]="renovarForm.invalid || !planSeleccionado">
+              <button type="submit" class="btn btn-success py-2 shadow-sm fw-bold"
+                [disabled]="renovarForm.invalid || !planSeleccionado">
                 <i class="fa fa-check-circle me-2"></i> CONFIRMAR RENOVACIÓN
               </button>
             </div>
@@ -90,33 +111,34 @@
 
     <div class="col-lg-7">
       <div class="card border-0 shadow-sm h-100">
-         <div class="card-header bg-white py-3 border-bottom">
-           <h6 class="mb-0 fw-bold text-primary">HISTORIAL DE PAGOS</h6>
-         </div>
-         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-               <thead class="bg-light text-secondary text-uppercase text-xs fw-bold">
-                 <tr>
-                   <th class="ps-4">Plan</th>
-                   <th class="text-center">Precio</th>
-                   <th class="text-center">Vencimiento</th>
-                   <th class="text-end pe-4">Estado</th>
-                 </tr>
-               </thead>
-               <tbody>
-                 <tr *ngFor="let sub of historialSuscripciones">
-                   <td class="ps-4 fw-bold">{{ sub.tipo }}</td>
-                   <td class="text-center">{{ sub.precioPagado ? sub.precioPagado + ' Bs' : '-' }}</td>
-                   <td class="text-center small">{{ sub.fechaFin | date:'dd/MM/yyyy' }}</td>
-                   <td class="text-end pe-4">
-                      <span class="badge rounded-pill" [ngClass]="sub.activa ? 'bg-success text-white' : 'bg-secondary text-white'">
-                        {{ sub.activa ? 'VIGENTE' : 'VENCIDO' }}
-                      </span>
-                   </td>
-                 </tr>
-               </tbody>
-            </table>
-         </div>
+        <div class="card-header bg-white py-3 border-bottom">
+          <h6 class="mb-0 fw-bold text-primary">HISTORIAL DE PAGOS</h6>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-secondary text-uppercase text-xs fw-bold">
+              <tr>
+                <th class="ps-4">Plan</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Vencimiento</th>
+                <th class="text-end pe-4">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sub of historialSuscripciones">
+                <td class="ps-4 fw-bold">{{ sub.tipo }}</td>
+                <td class="text-center">{{ sub.precioPagado ? sub.precioPagado + ' Bs' : '-' }}</td>
+                <td class="text-center small">{{ sub.fechaFin | date:'dd/MM/yyyy' }}</td>
+                <td class="text-end pe-4">
+                  <span class="badge rounded-pill"
+                    [ngClass]="sub.activa ? 'bg-success text-white' : 'bg-secondary text-white'">
+                    {{ sub.activa ? 'VIGENTE' : 'VENCIDO' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -131,32 +153,38 @@
         <h5 class="modal-title fw-bold"><i class="fa fa-tags me-2"></i>Selecciona un Plan</h5>
         <button type="button" class="btn-close btn-close-white" (click)="cerrarModalPlanes()"></button>
       </div>
+
       <div class="modal-body bg-light p-4">
-        
+
         <div class="row g-3">
-            <div class="col-md-4" *ngFor="let plan of listaPlanes">
-                <div class="card h-100 border-0 shadow-sm hover-scale cursor-pointer plan-card" (click)="seleccionarPlan(plan)">
-                    <div class="card-img-top bg-white p-4 text-center">
-                        <img [src]="plan.imagenUrl || 'assets/img/gym-placeholder.png'" 
-                             class="img-fluid rounded" 
-                             style="max-height: 100px; object-fit: contain;"
-                             alt="Icono Plan">
-                    </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold text-dark">{{ plan.nombre }}</h5>
-                        <p class="card-text text-muted small">{{ plan.descripcion }}</p>
-                        <h3 class="text-primary fw-bold my-3">{{ plan.precio }} Bs</h3>
-                        <span class="badge bg-info text-dark rounded-pill">{{ plan.duracionDias }} Días</span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-12 text-center py-5" *ngIf="listaPlanes.length === 0">
-                <i class="fa fa-box-open fa-3x text-muted mb-3"></i>
-                <p class="text-muted">No hay planes creados aún. Ve al módulo de configuración.</p>
+          <div class="col-md-4" *ngFor="let plan of listaPlanes">
+            <div class="card h-100 border-0 shadow-sm hover-scale cursor-pointer plan-card"
+              (click)="seleccionarPlan(plan)">
+
+              <div class="card-img-top bg-white p-4 text-center d-flex align-items-center justify-content-center"
+                style="height: 150px;">
+                <img *ngIf="plan.imagenUrl" [src]="plan.imagenUrl" class="img-fluid rounded"
+                  style="max-height: 100%; object-fit: contain;" alt="Icono Plan">
+
+                <i *ngIf="!plan.imagenUrl" class="fa fa-dumbbell fa-4x text-primary opacity-50"></i>
+              </div>
+
+              <div class="card-body text-center">
+                <h5 class="card-title fw-bold text-dark">{{ plan.nombre }}</h5>
+                <p class="card-text text-muted small">{{ plan.descripcion }}</p>
+                <h3 class="text-primary fw-bold my-3">{{ plan.precio }} Bs</h3>
+                <span class="badge bg-info text-dark rounded-pill">{{ plan.duracionDias }} Días</span>
+              </div>
             </div>
+          </div>
+
+          <div class="col-12 text-center py-5" *ngIf="listaPlanes.length === 0">
+            <i class="fa fa-box-open fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No hay planes creados aún.</p>
+          </div>
+
         </div>
-
       </div>
     </div>
   </div>

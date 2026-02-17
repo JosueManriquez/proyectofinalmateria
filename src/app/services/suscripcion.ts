@@ -150,6 +150,7 @@ export class SuscripcionService {
         fechaFin,
         fechaPago: new Date(),
         activa: true,
+        metodoPago: 'EFECTIVO'
       };
 
       await this.crearSuscripcion(nuevaSuscripcion);

@@ -52,7 +52,8 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
       nombrePlan: ['', Validators.required], // Solo lectura
       precio: [0, Validators.required],      // Solo lectura
       fechaInicio: ['', Validators.required],
-      fechaFin: ['', Validators.required]
+      fechaFin: ['', Validators.required],
+      metodoPago: ['EFECTIVO', Validators.required] // Inicialización correcta
     });
 
     // Recalcular fecha fin si cambia la fecha de inicio manual
@@ -83,10 +84,11 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
   seleccionarPlan(plan: PlanModelo) {
     this.planSeleccionado = plan;
 
-    // Asignar valores al formulario
+    // Asignar valores al formulario Y FORZAR EFECTIVO POR SI ACASO
     this.renovarForm.patchValue({
       nombrePlan: plan.nombre,
-      precio: plan.precio
+      precio: plan.precio,
+      metodoPago: 'EFECTIVO' // <--- DEFENSA EXTRA
     });
 
     this.actualizarFechaFin();
@@ -114,7 +116,16 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
     this.historialSuscripciones = [];
     this.ultimaSuscripcion = null;
     this.planSeleccionado = null; // Resetear plan
-    this.renovarForm.reset();
+    
+    // --- CORRECCIÓN AQUÍ: RESETEAR CON VALORES POR DEFECTO ---
+    this.renovarForm.reset({
+      nombrePlan: '',
+      precio: 0,
+      fechaInicio: '',
+      fechaFin: '',
+      metodoPago: 'EFECTIVO' // <--- ESTO EVITA QUE SE PONGA EN BLANCO
+    });
+    // ---------------------------------------------------------
 
     if (this.subHistorial) this.subHistorial.unsubscribe();
 
@@ -178,49 +189,40 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
     });
   }
 
-  // --- AQUÍ ESTÁ LA CORRECCIÓN PRINCIPAL ---
   async procesarRenovacion() {
     if (this.renovarForm.invalid || !this.usuarioEncontrado || !this.planSeleccionado) {
       alert("Por favor selecciona un plan.");
       return;
     }
 
-    const { fechaInicio, fechaFin, precio } = this.renovarForm.value;
+    const { fechaInicio, fechaFin, precio, metodoPago } = this.renovarForm.value;
     const inicioDate = this.parseFechaLocal(fechaInicio);
     const finDate = this.parseFechaLocal(fechaFin);
 
     try {
+      // Objeto base para evitar duplicidad de código
+      const nuevaSuscripcionBase: SuscripcionModelo = {
+        UsuarioModeloCi: this.usuarioEncontrado.ci || '',
+        UsuarioModeloApellido: this.usuarioEncontrado.apellido || '',
+        tipo: this.planSeleccionado.nombre,
+        precioPagado: Number(precio),
+        fechaInicio: inicioDate,
+        fechaFin: finDate,
+        fechaPago: new Date(),
+        activa: true,
+        metodoPago: metodoPago
+      };
+
       if (this.ultimaSuscripcion) {
-        // CASO 1: RENOVACIÓN
-        const nueva: SuscripcionModelo = {
-          UsuarioModeloCi: this.usuarioEncontrado.ci || '',
-          UsuarioModeloApellido: this.usuarioEncontrado.apellido || '',
-          tipo: this.planSeleccionado.nombre,
-          precioPagado: Number(precio),
-          fechaInicio: inicioDate,
-          fechaFin: finDate,
-          fechaPago: new Date(), // <--- AGREGADO: Fecha de pago HOY
-          activa: true
-        };
-        
+        // CASO 1: RENOVACIÓN (Desactivar anterior)
         if (this.ultimaSuscripcion.id) {
           await this.suscripcionService.activarDesactivar(this.ultimaSuscripcion.id, false);
         }
-        await this.suscripcionService.crearSuscripcion(nueva);
+        await this.suscripcionService.crearSuscripcion(nuevaSuscripcionBase);
 
       } else {
         // CASO 2: NUEVA SUSCRIPCIÓN
-        const nueva: SuscripcionModelo = {
-          UsuarioModeloCi: this.usuarioEncontrado.ci || '',
-          UsuarioModeloApellido: this.usuarioEncontrado.apellido || '',
-          tipo: this.planSeleccionado.nombre,
-          precioPagado: Number(precio),
-          fechaInicio: inicioDate,
-          fechaFin: finDate,
-          fechaPago: new Date(), // <--- CONFIRMADO: Fecha de pago HOY
-          activa: true
-        };
-        await this.suscripcionService.crearSuscripcion(nueva);
+        await this.suscripcionService.crearSuscripcion(nuevaSuscripcionBase);
       }
 
       alert('Suscripción procesada con éxito');
@@ -233,7 +235,16 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
   }
 
   private limpiarPantalla() {
-    this.renovarForm.reset();
+    // --- CORRECCIÓN AQUÍ TAMBIÉN ---
+    this.renovarForm.reset({
+      nombrePlan: '',
+      precio: 0,
+      fechaInicio: '',
+      fechaFin: '',
+      metodoPago: 'EFECTIVO' // <--- ESTO ASEGURA QUE AL LIMPIAR VUELVA A EFECTIVO
+    });
+    // -------------------------------
+    
     this.planSeleccionado = null;
     this.usuarioEncontrado = null;
     this.searchForm.reset();

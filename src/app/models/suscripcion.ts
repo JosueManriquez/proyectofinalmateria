@@ -8,4 +8,5 @@ export interface SuscripcionModelo {
   fechaFin: Date;    // Cuándo termina
   fechaPago: Date;   // <--- NUEVO: Cuándo pagó realmente (Flujo de Caja)
   activa: boolean;
+  metodoPago: string;
 }
