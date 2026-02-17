@@ -1,0 +1,118 @@
+<div class="container-fluid p-2 fade-in">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0"><i class="fa fa-chart-pie me-2 text-primary"></i>Dashboard de Reportes
+            </h2>
+            <p class="text-muted mb-0">Visualización en tiempo real de ingresos y afluencia del gimnasio.</p>
+        </div>
+        <!-- <button class="btn btn-danger shadow-sm d-flex align-items-center gap-2" (click)="generarPDF()">
+            <i class="fas fa-file-pdf"></i>
+            Exportar Reporte Mensual
+        </button> -->
+    </div>
+
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2 ps-3">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Ganancias (Mes
+                                Actual)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ ingresosDelMes }} Bs</div>
+                        </div>
+                        <div class="col-auto pe-3">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2 ps-3">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Membresías Vigentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalClientesActivos }}</div>
+                        </div>
+                        <div class="col-auto pe-3">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2 ps-3">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Asistencias (Hoy)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalAsistenciasHoy }}</div>
+                        </div>
+                        <div class="col-auto pe-3">
+                            <i class="fas fa-running fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2 ps-3">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Estado del Sistema
+                            </div>
+                            <div class="h6 mb-0 font-weight-bold text-gray-800">Sincronizado</div>
+                        </div>
+                        <div class="col-auto pe-3">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 fw-bold text-primary">Flujo de Ingresos Anual</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height:320px; width:100%">
+                        <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 fw-bold text-success">Horas Pico (Asistencias)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height:320px; width:100%">
+                        <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+                        </canvas>
+                    </div>
+                    <!-- <hr>
+                     <div class="text-center small">
+                        <i class="fas fa-info-circle text-muted"></i> Datos basados en ingresos por biometría/molinete.
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

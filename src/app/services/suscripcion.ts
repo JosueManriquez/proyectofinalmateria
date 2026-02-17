@@ -20,11 +20,11 @@ export class SuscripcionService {
 
   // Crear suscripción
   crearSuscripcion(suscripcion: SuscripcionModelo): Promise<void> {
-    return runInInjectionContext(this.injector, () => {
-      const id = this.afs.createId();
-      return this.afs.collection('suscripciones').doc(id).set({ ...suscripcion });
-    });
-  }
+  return runInInjectionContext(this.injector, () => {
+    return this.afs.collection('suscripciones').add(suscripcion)
+      .then(() => { /* éxito */ });
+  });
+}
 
   // Listar todas las suscripciones
   listarSuscripciones(): Observable<SuscripcionModelo[]> {

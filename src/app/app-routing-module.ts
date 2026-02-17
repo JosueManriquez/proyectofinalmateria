@@ -22,6 +22,9 @@ import { EditarUsuario } from './modules/dashboard/bienvenida-admin/usuarios/edi
 // Componentes de Suscripción (Admin)
 import { RenovarSuscripcion } from './modules/suscripcion/renovar-suscripcion/renovar-suscripcion';
 import { Historial } from './modules/suscripcion/historial/historial';
+import { Reportes } from './modules/suscripcion/reportes/reportes';
+
+
 /* import { CrearSuscripcion } from './modules/suscripcion/crear-suscripcion/crear-suscripcion';
  */
 
@@ -68,6 +71,8 @@ const routes: Routes = [
       { path: 'suscripcion/renovar-suscripcion', component: RenovarSuscripcion },
       { path: 'suscripcion/historial', component: Historial },
       { path: 'gestionar-planes', component: GestionarPlanes },
+      { path: 'reportes', component: Reportes },
+
     ]
   },
 

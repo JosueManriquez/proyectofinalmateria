@@ -1,0 +1,57 @@
+/* Animación de entrada suave para el dashboard */
+.fade-in {
+    animation: fadeIn 0.8s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Contenedores de Gráficos */
+.chart-container {
+    position: relative;
+    height: 320px;
+    width: 100%;
+}
+
+/* Tarjetas KPI (Estilo Dashboard Profesional) */
+.card {
+    border-radius: 10px;
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+
+/* Tipografía de Reportes */
+.text-xs {
+    font-size: 0.7rem;
+    letter-spacing: 0.1rem;
+}
+
+.text-gray-300 {
+    color: #dddfeb !important;
+}
+
+.text-gray-800 {
+    color: #5a5c69 !important;
+}
+
+/* Sombras suaves para las gráficas */
+.shadow {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}

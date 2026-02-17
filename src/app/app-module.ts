@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { DashboardModule } from './modules/dashboard/dashboard-module';
 import { GymModule } from './modules/gym/gym-module';
 import { SuscripcionModule } from './modules/suscripcion/suscripcion-module';
-
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -37,6 +37,7 @@ registerLocaleData(localeEs);
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     /* provideClientHydration(withEventReplay())   */
+    provideCharts(withDefaultRegisterables())
   ],
   bootstrap: [App]
 })

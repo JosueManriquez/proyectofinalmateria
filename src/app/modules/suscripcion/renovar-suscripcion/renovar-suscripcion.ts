@@ -199,7 +199,7 @@ export class RenovarSuscripcion implements OnInit, OnDestroy {
           UsuarioModeloCi: this.usuarioEncontrado.ci || '',
           UsuarioModeloApellido: this.usuarioEncontrado.apellido || '',
           tipo: this.planSeleccionado.nombre, // Usamos el nombre del plan
-          precioPagado: precio, // Guardamos cuánto pagó
+          precioPagado: Number(precio), // Guardamos cuánto pagó
           fechaInicio: inicioDate,
           fechaFin: finDate,
           activa: true
