@@ -148,6 +148,7 @@ export class SuscripcionService {
         precioPagado: precio, // <--- AQUI SE ASIGNA EL PRECIO
         fechaInicio,
         fechaFin,
+        fechaPago: new Date(),
         activa: true,
       };
 

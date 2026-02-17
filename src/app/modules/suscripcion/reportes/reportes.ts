@@ -18,6 +18,9 @@ export class Reportes implements OnInit {
   totalClientesActivos: number = 0;
   totalAsistenciasHoy: number = 0;
 
+  // Variable para almacenar los datos crudos y usarlos en el PDF
+  listaSuscripciones: SuscripcionModelo[] = [];
+
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false
@@ -25,7 +28,7 @@ export class Reportes implements OnInit {
   public barChartType: ChartType = 'bar';
   public barChartData: ChartData<'bar'> = {
     labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-    datasets: [{ data: new Array(12).fill(0), label: 'Ganancias (Bs)', backgroundColor: '#4e73df' }]
+    datasets: [{ data: new Array(12).fill(0), label: 'Flujo de Caja (Bs)', backgroundColor: '#4e73df' }]
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -41,7 +44,7 @@ export class Reportes implements OnInit {
   constructor(
     private firestore: AngularFirestore,
     private cdr: ChangeDetectorRef,
-    private injector: Injector // Inyectamos el Injector como en tu servicio funcional
+    private injector: Injector
   ) { }
 
   ngOnInit(): void {
@@ -51,37 +54,41 @@ export class Reportes implements OnInit {
   cargarEstadisticas() {
     runInInjectionContext(this.injector, () => {
 
-      // 1. CARGAR SUSCRIPCIONES
+      // 1. CARGAR SUSCRIPCIONES (Cálculo Financiero por fechaPago)
       this.firestore.collection<SuscripcionModelo>('suscripciones').valueChanges().subscribe((subs) => {
-        const ventasMes = new Array(12).fill(0);
+        this.listaSuscripciones = subs; // Guardamos para el PDF
+
+        const flujoCajaAnual = new Array(12).fill(0);
         const hoy = new Date();
-        let sumaMesActual = 0;
+        let cajaMesActual = 0;
 
         // Contar membresías activas
         this.totalClientesActivos = subs.filter(s => s.activa === true).length;
 
         subs.forEach(s => {
-          // Conversión flexible: intentamos Timestamp de Firebase primero, luego Date normal
-          const fechaRaw: any = s.fechaInicio;
-          let f: Date = fechaRaw?.seconds ? new Date(fechaRaw.seconds * 1000) : new Date(fechaRaw);
+          // Usamos fechaPago si existe (nuevo estándar), si no, fechaInicio (retrocompatibilidad)
+          const fechaRef: any = s.fechaPago || s.fechaInicio;
+          const f = fechaRef?.seconds ? new Date(fechaRef.seconds * 1000) : new Date(fechaRef);
 
-          if (!isNaN(f.getTime())) {
-            const mesIndex = f.getMonth(); // 0 = Enero, 1 = Febrero...
+          if (f && !isNaN(f.getTime())) {
+            const mes = f.getMonth(); // 0 = Enero
+            const anio = f.getFullYear();
             const monto = Number(s.precioPagado || 0);
 
-            // Llenamos el gráfico (Mostramos todos los datos que existan en la DB)
-            ventasMes[mesIndex] += monto;
+            // Llenamos el gráfico del AÑO ACTUAL (Flujo de Caja)
+            if (anio === hoy.getFullYear()) {
+              flujoCajaAnual[mes] += monto;
+            }
 
-            // Solo sumamos a la tarjeta si es el mes y año en el que estamos (Feb 2026)
-            if (mesIndex === hoy.getMonth() && f.getFullYear() === hoy.getFullYear()) {
-              sumaMesActual += monto;
+            // Llenamos la tarjeta del MES ACTUAL
+            if (mes === hoy.getMonth() && anio === hoy.getFullYear()) {
+              cajaMesActual += monto;
             }
           }
         });
 
-        this.ingresosDelMes = sumaMesActual;
-        // IMPORTANTE: Creamos una nueva referencia para que Chart.js detecte el cambio
-        this.barChartData.datasets[0].data = [...ventasMes];
+        this.ingresosDelMes = cajaMesActual;
+        this.barChartData.datasets[0].data = [...flujoCajaAnual];
         this.barChartData = { ...this.barChartData };
 
         this.cdr.detectChanges();
@@ -124,14 +131,20 @@ export class Reportes implements OnInit {
   }
 
   generarPDF() {
-    const doc = new jsPDF();
+    // 1. Configuración para TAMAÑO CARTA (Letter)
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'letter' // Carta: 215.9mm x 279.4mm
+    });
+
     const hoy = new Date();
     const fechaReporte = hoy.toLocaleDateString('es-BO');
     const horaReporte = hoy.toLocaleTimeString('es-BO');
 
-    // 1. ENCABEZADO ESTILO CORPORATIVO
-    doc.setFillColor(33, 37, 41); // Gris muy oscuro/Negro
-    doc.rect(0, 0, 210, 40, 'F');
+    // 2. ENCABEZADO
+    doc.setFillColor(33, 37, 41); // Color oscuro
+    doc.rect(0, 0, doc.internal.pageSize.width, 40, 'F');
 
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
@@ -141,12 +154,11 @@ export class Reportes implements OnInit {
     doc.text(`Fecha de emisión: ${fechaReporte} | Hora: ${horaReporte}`, 14, 30);
     doc.text(`Responsable: Josue Manriquez Lopez`, 14, 35);
 
-    // 2. RESUMEN FINANCIERO (DIARIO Y MENSUAL)
+    // 3. RESUMEN FINANCIERO
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(16);
     doc.text('1. Resumen Económico', 14, 55);
 
-    // Calculamos la ganancia de hoy filtrando los datos actuales
     const gananciasHoy = this.calcularGananciasHoy();
 
     autoTable(doc, {
@@ -154,14 +166,13 @@ export class Reportes implements OnInit {
       head: [['Descripción del Ingreso', 'Monto Acumulado']],
       body: [
         ['Ganancias Totales del Día (Cierre de Caja)', `${gananciasHoy} Bs`],
-        ['Ganancias Totales del Mes (Febrero 2026)', `${this.ingresosDelMes} Bs`],
-/*         ['Promedio de Ingreso por Socio', `${(this.ingresosDelMes / (this.totalClientesActivos || 1)).toFixed(2)} Bs`]
- */      ],
+        ['Ganancias Totales del Mes (Acumulado)', `${this.ingresosDelMes} Bs`],
+      ],
       theme: 'grid',
-      headStyles: { fillColor: [78, 115, 223] } // Azul Primary
+      headStyles: { fillColor: [78, 115, 223] }
     });
 
-    // 3. ESTADO OPERATIVO (MEMBRESÍAS Y AFLUENCIA)
+    // 4. ESTADO OPERATIVO
     doc.setFontSize(16);
     doc.text('2. Análisis Operativo', 14, (doc as any).lastAutoTable.finalY + 15);
 
@@ -171,13 +182,12 @@ export class Reportes implements OnInit {
       body: [
         ['Membresías con Estado Activo', this.totalClientesActivos.toString()],
         ['Asistencias Registradas (Hoy)', this.totalAsistenciasHoy.toString()],
-        /* ['Capacidad Utilizada (Estimada)', `${((this.totalAsistenciasHoy / 100) * 100).toFixed(1)}%`] */
       ],
       theme: 'striped',
-      headStyles: { fillColor: [28, 200, 138] } // Verde Success
+      headStyles: { fillColor: [28, 200, 138] }
     });
 
-    // 4. DESGLOSE MENSUAL HISTÓRICO
+    // 5. GRÁFICO ANUAL
     doc.setFontSize(16);
     doc.text('3. Evolución de Ingresos Anual', 14, (doc as any).lastAutoTable.finalY + 15);
 
@@ -190,28 +200,67 @@ export class Reportes implements OnInit {
       head: [['Mes', 'Monto']],
       body: tablaCuerpo,
       styles: { fontSize: 8 },
-      headStyles: { fillColor: [133, 135, 150] } // Gris
+      headStyles: { fillColor: [133, 135, 150] }
     });
+
+    // 6. DETALLE DE VENTAS (AQUÍ ESTÁ LA MAGIA DEL SALTO DE PÁGINA)
+    doc.addPage(); // <--- ESTO CREA LA NUEVA HOJA (Página 2)
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(14);
+    // Fijamos la posición Y en 20 para que empiece arriba en la nueva hoja
+    doc.text('4. Detalle de Transacciones (Hoy)', 14, 20);
+
+    const ventasDetalle = this.obtenerVentasDeHoy();
+    const cuerpoVentas = ventasDetalle.map(v => [
+      v.UsuarioModeloApellido || 'S/N',
+      v.tipo,
+      `${v.precioPagado} Bs`
+    ]);
+
+    if (cuerpoVentas.length > 0) {
+      autoTable(doc, {
+        startY: 30, // <--- Fijamos el inicio de la tabla
+        head: [['Socio', 'Plan', 'Monto']],
+        body: cuerpoVentas,
+        theme: 'plain'
+      });
+    } else {
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text('No se registraron transacciones monetarias hoy.', 14, 30);
+    }
 
     // PIE DE PÁGINA
     const pageCount = (doc as any).internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(10);
+      doc.setTextColor(150);
       doc.text(`Página ${i} de ${pageCount}`, 14, doc.internal.pageSize.height - 10);
-      doc.text('SISTEMA GENERADO PARA DEFENSA DE PROYECTO - UNANDES', 100, doc.internal.pageSize.height - 10);
+      doc.text('SISTEMA GENERADO PARA DEFENSA DE PROYECTO - UNANDES', 60, doc.internal.pageSize.height - 10);
     }
 
     doc.save(`Reporte_GymSystem_${fechaReporte.replace(/\//g, '-')}.pdf`);
   }
 
-  // Función auxiliar para calcular lo del día
+  // --- FUNCIONES AUXILIARES ---
+
   private calcularGananciasHoy(): number {
-    const hoy = new Date().toDateString();
-    let suma = 0;
-    // Aquí usamos la variable que ya tienes en el subscribe de suscripciones
-    // Si no tienes acceso a la lista completa, podrías guardarla en una variable global 'listaSuscripciones'
-    return suma; // Implementar lógica de suma según tus datos locales
+    const hoyString = new Date().toDateString();
+    return this.listaSuscripciones.reduce((acc, s) => {
+      const fechaRef: any = s.fechaPago || s.fechaInicio;
+      const f = fechaRef?.seconds ? new Date(fechaRef.seconds * 1000) : new Date(fechaRef);
+      return (f.toDateString() === hoyString) ? acc + Number(s.precioPagado || 0) : acc;
+    }, 0);
   }
 
+  private obtenerVentasDeHoy(): SuscripcionModelo[] {
+    const hoyString = new Date().toDateString();
+    return this.listaSuscripciones.filter(s => {
+      const fechaRef: any = s.fechaPago || s.fechaInicio;
+      const f = fechaRef?.seconds ? new Date(fechaRef.seconds * 1000) : new Date(fechaRef);
+      return f.toDateString() === hoyString;
+    });
+  }
 }
